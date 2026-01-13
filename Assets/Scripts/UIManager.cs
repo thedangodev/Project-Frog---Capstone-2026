@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -22,10 +23,10 @@ public class UIManager : MonoBehaviour
     // --- call primary fonction ---
     public void OnStartClicked()
     {
-       
+        SceneManager.LoadScene("gameScene");
     }
 
-    public void OnSettingsClicked()
+    public void OnOptionsClicked()
     {
        
     }
@@ -33,10 +34,18 @@ public class UIManager : MonoBehaviour
     public void OnExitClicked()
     {
         Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false; // Stops play mode in the editor
+#endif
+    }
+
+    public void OnCreditsClicked()
+    {
+
     }
 
     // --- call sub menu ---
- 
+
     public void OnAudioClicked()
     {
         Debug.Log("Menu Audio open");
