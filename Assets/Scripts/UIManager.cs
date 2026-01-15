@@ -48,6 +48,17 @@ public class UIManager : MonoBehaviour
         audioMenu.SetActive(isOptionsExpanded);
         videoMenu.SetActive(isOptionsExpanded);
         controlsMenu.SetActive(isOptionsExpanded);
+
+        // Close audio sub-menu if options menu is closed
+        if (!isOptionsExpanded)
+        {
+            isAudioMenuOpen = false;
+
+            sfxSlider.SetActive(false);
+            sfxLabel.SetActive(false);
+            musicSlider.SetActive(false);
+            musicLabel.SetActive(false);
+        }
     }
 
     public void OnExitClicked()
@@ -60,7 +71,7 @@ public class UIManager : MonoBehaviour
 
     public void OnCreditsClicked()
     {
-        // Load credits scene or display credits
+        SceneManager.LoadScene("Credits");
     }
 
     //Sub-menu functions
@@ -80,7 +91,6 @@ public class UIManager : MonoBehaviour
         sfxLabel.SetActive(isAudioMenuOpen);
         musicSlider.SetActive(isAudioMenuOpen);
         musicLabel.SetActive(isAudioMenuOpen);
-
     }
 
     public void OnControlsClicked()
