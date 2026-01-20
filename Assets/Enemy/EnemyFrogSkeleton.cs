@@ -31,7 +31,7 @@ public class EnemyFrogSkeleton : EnemyBase
             StopMovement();
             if (canAttack)
             {
-                Attack();
+                // attack
             }
             return;
         }
