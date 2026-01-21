@@ -850,7 +850,7 @@ GameObject:
   - component: {fileID: 347270531}
   - component: {fileID: 347270530}
   m_Layer: 5
-  m_Name: VideoMenu
+  m_Name: VideoButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2175,7 +2175,7 @@ GameObject:
   - component: {fileID: 1001455488}
   - component: {fileID: 1001455487}
   m_Layer: 5
-  m_Name: ControlsMenu
+  m_Name: ControlsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2401,19 +2401,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7fe04fbec8a32e4f944dfe1c35a75bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  audioMenu: {fileID: 1386575057}
-  videoMenu: {fileID: 347270528}
-  controlsMenu: {fileID: 1001455485}
-  startButton: {fileID: 312797646}
-  optionButton: {fileID: 989797654}
-  exitButton: {fileID: 2085843847}
-  creditsButton: {fileID: 856300314}
-  sfxSlider: {fileID: 948878640}
-  sfxLabel: {fileID: 1822043318}
-  musicSlider: {fileID: 1949093289}
-  musicLabel: {fileID: 1407121312}
-  masterSlider: {fileID: 916011440}
-  masterLabel: {fileID: 95790857}
+  audioButton: {fileID: 1386575059}
+  videoButton: {fileID: 347270530}
+  controlsButton: {fileID: 1001455487}
+  startButton: {fileID: 312797648}
+  optionButton: {fileID: 989797656}
+  exitButton: {fileID: 2085843849}
+  creditsButton: {fileID: 856300316}
+  sfxSlider: {fileID: 948878642}
+  sfxLabel: {fileID: 1822043320}
+  musicSlider: {fileID: 1949093291}
+  musicLabel: {fileID: 1407121314}
+  masterSlider: {fileID: 916011442}
+  masterLabel: {fileID: 95790859}
   keyboardImage: {fileID: 1826428321}
   controllerImage: {fileID: 1472444711}
 --- !u!4 &1237761245
@@ -2730,7 +2730,7 @@ GameObject:
   - component: {fileID: 1386575060}
   - component: {fileID: 1386575059}
   m_Layer: 5
-  m_Name: AudioMenu
+  m_Name: AudioButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3082,7 +3082,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 371c3fa0c53158d4aa87039a4ee8bfc6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3553,7 +3553,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: edbc7607f08fc48429cfd86d5010c9ec, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
