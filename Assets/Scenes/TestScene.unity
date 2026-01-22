@@ -424,7 +424,6 @@ MonoBehaviour:
   viewDistance: 12
   viewHalfAngle: 55
   obstructionLayers:
-    serializedVersion: 2
     m_Bits: 4294967295
   visionRefresh: 0.1
   eyes: {fileID: 0}
@@ -432,14 +431,21 @@ MonoBehaviour:
   attackRange: 2
   showAttackLineMode: 0
   attackLine: {fileID: 0}
-  idleLineColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  attackingLineColor: {r: 1, g: 0, b: 0, a: 1}
+  idleLineColor:
+    r: 1
+    g: 0.92156863
+    b: 0.015686275
+    a: 1
+  attackingLineColor:
+    r: 1
+    g: 0
+    b: 0
+    a: 1
   attackLineHeightOffset: 0.15
   useSeparation: 1
   separationRadius: 1
   separationStrength: 1
   enemyLayers:
-    serializedVersion: 2
     m_Bits: 4294967295
   useNavMeshAgent: 1
   animator: {fileID: 0}
@@ -447,6 +453,13 @@ MonoBehaviour:
   deadBoolName: IsDead
   projectileTag: Projectile
   disableColliderOnDeath: 1
+  agent: {fileID: 0}
+  rb: {fileID: 0}
+  col: {fileID: 0}
+  isDead: 0
+  hasLOS: 0
+  nextVisionTime: 0
+  isAttacking: 0
 --- !u!195 &353901302
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -809,6 +822,9 @@ MonoBehaviour:
   gravity: -20
   faceMoveDirection: 1
   cameraTransform: {fileID: 0}
+  controller: {fileID: 0}
+  verticalVelocity: {x: 0, y: 0, z: 0}
+  moveInput: {x: 0, y: 0}
 --- !u!143 &1252654874
 CharacterController:
   m_ObjectHideFlags: 0
