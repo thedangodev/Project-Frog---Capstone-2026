@@ -23,6 +23,7 @@ class GenericEnemy : MonoBehaviour
     [SerializeField] private float stopDistance = 0.6f;           // Distance at which the enemy stops moving toward the Player.
     [SerializeField] private bool faceTargetWhileChasing = true; // Enemy rotates to face the player while chasing the Player.
 
+
     // Line of Sight fields
 
     [Header("Line of Sight")]
@@ -32,6 +33,31 @@ class GenericEnemy : MonoBehaviour
     [SerializeField] private float visionRefresh = 0.1f;       // How often LOS updates (optimization).
     [SerializeField] private Transform eyes;                  // Optional eye transform for raycast origin.
     [SerializeField] private float eyeHeight = 1.6f;         // Fallback eye height if no "eyes" transform exists.
+
+
+    // Enemy Attack Raycast, Test/Debugging feature
+ 
+
+    [Header("Attack Ray (Debug/Visual)")]
+    [SerializeField] private float attackRange = 1.25f; // Distance at which enemy is "attacking" the Player.
+
+    // Controls how the attack ray is shown to the User visually.
+    private enum AttackLineMode
+    {
+        AlwaysVisibleChangesColor,      // Ray is always visible; changes color when attacking.
+        OnlyVisibleWhenAttacking       // Ray only appears once the enemy is attacking.
+    }
+
+    [SerializeField] private AttackLineMode showAttackLineMode = AttackLineMode.AlwaysVisibleChangesColor;
+
+    [Tooltip("Optional: assign a LineRenderer to show the attack ray in the Game view (and builds).")]
+    [SerializeField] private LineRenderer attackLine; // The visual line displayed in the world.
+
+    [SerializeField] private Color idleLineColor = Color.yellow;     
+    [SerializeField] private Color attackingLineColor = Color.red;   
+
+    [Tooltip("Small vertical offset so the line doesn't clip the floor.")]
+    [SerializeField] private float attackLineHeightOffset = 0.15f;
 
     // Enemy Clump Prevention (If more than one)
 
@@ -45,6 +71,20 @@ class GenericEnemy : MonoBehaviour
 
     [Header("Movement Backend")]
     [SerializeField] private bool useNavMeshAgent = true; // If false, the enemy won't chase using NavMeshAgent.
+
+    // Enemy Death Anims
+
+    [Header("Death / Animation")]
+    [SerializeField] private Animator animator;                 // Animator used for death animation.
+    [SerializeField] private string deathTriggerName = "Die";  // Trigger parameter name for death.
+    [SerializeField] private string deadBoolName = "IsDead";  // Bool parameter name for death state.
+
+    // Hit Detection
+
+    [Header("Hit Detection")]
+    [Tooltip("Tag used to identify projectiles that can kill this enemy.")]
+    [SerializeField] private string projectileTag = "Projectile";  // Tag for player projectiles.
+    [SerializeField] private bool disableColliderOnDeath = true;  // If true, disables collider when dead.
 
     // Component References
 
@@ -87,6 +127,20 @@ class GenericEnemy : MonoBehaviour
             agent.autoBraking = false;
         }
 
+        // Auto-find animator if not assigned.
+        if (!animator) animator = GetComponentInChildren<Animator>();
+
+        // Setup attack line renderer if it exists.
+        if (!attackLine) attackLine = GetComponent<LineRenderer>();
+        if (attackLine)
+        {
+            attackLine.positionCount = 2;
+
+            if (showAttackLineMode == AttackLineMode.OnlyVisibleWhenAttacking)
+                attackLine.enabled = false;
+
+            ApplyLineColor(idleLineColor);
+        }
     }
 
     private void Start()
@@ -110,6 +164,9 @@ class GenericEnemy : MonoBehaviour
             hasLOS = ComputeHasLOS();
             nextVisionTime = Time.time + visionRefresh;
         }
+
+        // Update attack ray visuals/logic.
+        UpdateAttackRay();
 
         // If NavMesh movement is disabled, stop here (still allows ray visuals to run).
         if (!useNavMeshAgent || agent == null) return;
@@ -154,6 +211,100 @@ class GenericEnemy : MonoBehaviour
         }
     }
 
+    // Raycast Attack Visual (For testing)
+
+    private void UpdateAttackRay()
+    {
+        isAttacking = false;
+
+        // If no LOS, hide attack line and exit.
+        if (!hasLOS || !player)
+        {
+            SetAttackLineVisible(false, idleLineColor);
+            return;
+        }
+
+        // Determine ray origin point.
+        Vector3 origin = eyes ? eyes.position : (transform.position + Vector3.up * eyeHeight);
+        origin.y += attackLineHeightOffset;
+
+        // Direction toward player.
+        Vector3 target = player.position;
+        Vector3 dir = target - origin;
+
+        float distToPlayer = dir.magnitude;
+        if (distToPlayer < 0.001f)
+        {
+            SetAttackLineVisible(false, idleLineColor);
+            return;
+        }
+
+        Vector3 dirNorm = dir / distToPlayer;
+
+        // Ray length is capped at attack range.
+        float rayLen = Mathf.Min(attackRange, distToPlayer);
+
+        // Raycast checks for player within range (blocked by walls/layers).
+        if (Physics.Raycast(origin, dirNorm, out RaycastHit hit, rayLen, obstructionLayers, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.collider.CompareTag(playerTag) || hit.collider.transform.root.CompareTag(playerTag))
+                isAttacking = true;
+        }
+        else
+        {
+            // If nothing was hit (no obstruction) and the player is within range.
+            if (distToPlayer <= attackRange)
+                isAttacking = true;
+        }
+
+        // Draw/Update attack line.
+        if (attackLine)
+        {
+            Vector3 endPoint = origin + dirNorm * rayLen;
+
+            attackLine.SetPosition(0, origin);
+            attackLine.SetPosition(1, endPoint);
+
+            // Always visible mode: show line, just switch colors.
+            if (showAttackLineMode == AttackLineMode.AlwaysVisibleChangesColor)
+            {
+                attackLine.enabled = true;
+                SetAttackLineVisible(true, isAttacking ? attackingLineColor : idleLineColor);
+            }
+            else
+            {
+                // Only visible mode: show only while attacking.
+                SetAttackLineVisible(isAttacking, attackingLineColor);
+            }
+        }
+        else
+        {
+            Debug.DrawRay(origin, dirNorm * rayLen, isAttacking ? attackingLineColor : idleLineColor);
+        }
+    }
+
+    private void SetAttackLineVisible(bool visible, Color color)
+    {
+        if (!attackLine) return;
+
+        // Always-visible mode forces the attack raycast to stay visible.
+        if (showAttackLineMode == AttackLineMode.AlwaysVisibleChangesColor)
+            visible = true;
+
+        attackLine.enabled = visible;
+        ApplyLineColor(color);
+    }
+
+    private void ApplyLineColor(Color c)
+    {
+        if (!attackLine) return;
+
+        attackLine.startColor = c;
+        attackLine.endColor = c;
+    }
+
+    // NavMesh Settings
+
     private void ApplyAgentSettings(bool force)
     {
         if (!agent) return;
@@ -170,6 +321,54 @@ class GenericEnemy : MonoBehaviour
         if (force || !Mathf.Approximately(agent.stoppingDistance, stopDistance))
             agent.stoppingDistance = stopDistance;
     }
+
+    // Death/Damage System (No Player Attacks at this time)
+
+    //private void Die()
+    //{
+    //    if (isDead) return;
+    //    isDead = true;
+
+    //    // Stop NavMesh movement
+    //    if (agent)
+    //    {
+    //        agent.isStopped = true;
+    //        agent.ResetPath();
+    //        agent.updatePosition = false;
+    //        agent.updateRotation = false;
+    //    }
+
+    //    // Freeze physics (still kinematic)
+    //    rb.isKinematic = true;
+
+    //    // Disable collider so it doesn't interfere after death
+    //    if (disableColliderOnDeath && col) col.enabled = false;
+
+    //    // Hide attack line on death
+    //    if (attackLine) attackLine.enabled = false;
+
+    //    // Trigger death animation parameters
+    //    if (animator)
+    //    {
+    //        if (!string.IsNullOrEmpty(deadBoolName))
+    //            animator.SetBool(deadBoolName, true);
+
+    //        if (!string.IsNullOrEmpty(deathTriggerName))
+    //            animator.SetTrigger(deathTriggerName);
+    //    }
+    //}
+
+    //private void TakeHit(Collider projectile, Collision c)
+    //{
+    //    if (isDead) return;
+
+    //    // Destroy the projectile that hit the enemy
+    //    if (projectile && projectile.gameObject)
+    //        Destroy(projectile.gameObject);
+
+    //    // Kill enemy
+    //    Die();
+    //}
 
     private bool ComputeHasLOS()
     {
