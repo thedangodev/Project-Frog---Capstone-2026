@@ -1,14 +1,13 @@
 using UnityEngine;
 using UnityEngine.AI;
  
-  // This script is specifically for the Corrupted Swamp Elder - Enemy will chase the Player Transform or object tagged as Player until in range, and will execute a Melee attack. 
- // Simple Raycast system has been built to visually show status between Chase/Attack behaviours. (Yellow = Chasing/Not in range, Red = Attacking Player.)
+  // This script is specifically for the Corrupted Swamp Elder - Enemy will chase the Player Transform or object tagged as Player until in range of a melee attack.
 // Swamp Elder Script by Eric M.
 
 [DisallowMultipleComponent]                 // Prevents adding multiple of this script to the same GameObject
 [RequireComponent(typeof(Collider))]       
 [RequireComponent(typeof(NavMeshAgent))]  // Ensures the enemy has a NavMeshAgent component
-class GenericEnemy : MonoBehaviour
+class SwampElder : MonoBehaviour
 {
     // Enemy Targets
 
@@ -22,6 +21,7 @@ class GenericEnemy : MonoBehaviour
     [SerializeField] private float moveSpeed = 3.5f;               // Enemy's movement speed via NavMeshAgent.
     [SerializeField] private float stopDistance = 0.6f;           // Distance at which the enemy stops moving toward the Player.
     [SerializeField] private bool faceTargetWhileChasing = true; // Enemy rotates to face the player while chasing the Player.
+
 
     // Line of Sight fields
 
@@ -61,7 +61,6 @@ class GenericEnemy : MonoBehaviour
     private bool isAttacking = false;  // True if player is within attack range (ray test).
 
     // Unity Lifecycle
-
     private void Awake()
     {
         // Grab and configure collider.
@@ -86,9 +85,7 @@ class GenericEnemy : MonoBehaviour
             agent.angularSpeed = 720f;
             agent.autoBraking = false;
         }
-
     }
-
     private void Start()
     {
         // Auto-find player transform if not manually assigned.
@@ -154,6 +151,8 @@ class GenericEnemy : MonoBehaviour
         }
     }
 
+    // NavMesh Settings
+
     private void ApplyAgentSettings(bool force)
     {
         if (!agent) return;
@@ -197,7 +196,6 @@ class GenericEnemy : MonoBehaviour
 
         return true;
     }
-
 
     // Anti-Clump System (if more than one chasing Player)
 
