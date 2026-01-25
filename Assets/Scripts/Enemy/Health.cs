@@ -1,39 +1,46 @@
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 [RequireComponent(typeof(Healthbar))]
 public class Health : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
-    private float currentHealth;
+    [SerializeField] private float currentHealth;
     private Healthbar healthbar;
 
     public bool IsDead { get; private set; }
+
+    private TopDownControllerWithDash controller;
 
     private void Awake()
     {
         healthbar = GetComponent<Healthbar>();
         currentHealth = maxHealth;
         IsDead = false;
+
+        controller = GetComponent<TopDownControllerWithDash>();
     }
+
+
 
     public void TakeDmg(float dmg)
     {
         if (IsDead) return;
 
-        // Subtract currentHealth by damageAmmount
-        currentHealth -= dmg;
+        // IMMORTAL MODE controlled by player controller
+        if (controller != null && controller.IsImmortal)
+            return;
 
-        // Ensure currentHealth stays between 0 and maxHealth
+        currentHealth -= dmg;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
 
-        // Update healthbar visual
         healthbar.UpdateHealthBar(maxHealth, currentHealth);
 
         if (currentHealth == 0f)
-        {
             Die();
-        }
     }
+
+
 
     private void Die()
     {
