@@ -100,3 +100,5 @@ InitTestScene*.unity*
 
 
 # Manual Ignores
+/Assets/DogKnight/
+/Assets/DogKnight.meta

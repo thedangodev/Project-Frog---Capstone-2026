@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(Healthbar))]
 public class EnemyHealth : MonoBehaviour 
@@ -38,6 +39,10 @@ public class EnemyHealth : MonoBehaviour
     private void Die()
     {
         IsDead = true;
+        if (OnDestroyed != null)
+            OnDestroyed.Invoke(gameObject);
         Destroy(gameObject);
     }
+
+    public event Action<GameObject> OnDestroyed;
 }

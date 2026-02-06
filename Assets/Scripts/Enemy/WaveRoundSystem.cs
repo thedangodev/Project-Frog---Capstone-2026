@@ -16,9 +16,9 @@ public class WaveRoundSystem : MonoBehaviour
     [SerializeField] private int maxRounds = 20;
     
     [Header("Input")]
-    [SerializeField] private KeyCode skipRoundKey = KeyCode.Space;
+    [SerializeField] private readonly KeyCode skipRoundKey = KeyCode.L;
     
-    private List<GameObject> activeEnemies = new List<GameObject>();
+    private readonly List<GameObject> activeEnemies = new List<GameObject>();
     private int enemiesDestroyedThisRound = 0;
 
     void Start()
