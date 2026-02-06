@@ -11,18 +11,19 @@ public class EnemyBehaviorRise : MonoBehaviour
     private bool isRising = true;
 
     private Rigidbody rb;
-    private EnemyAI enemyAI;
+    private EnemyBase enemyBase;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        enemyAI = GetComponent<EnemyAI>();
+        enemyBase = GetComponent<EnemyBase>();
+    
 
         rb.isKinematic = true;
 
-        if (enemyAI != null)
+        if (enemyBase != null)
         {
-            enemyAI.enabled = false;
+            enemyBase.enabled = false;
         }
     }
 
@@ -53,14 +54,14 @@ public class EnemyBehaviorRise : MonoBehaviour
         isRising = false;
 
 
-        if (enemyAI != null)
+        if (enemyBase != null)
         {
-            enemyAI.enabled = true;
+            enemyBase.enabled = true;
 
             EnemySpawnWaves spawner = FindObjectOfType<EnemySpawnWaves>();
             if (spawner != null)
             {
-                enemyAI.Activate(spawner.PlayerTransform);
+                enemyBase.Activate(spawner.PlayerTransform);
             }
         }
     }

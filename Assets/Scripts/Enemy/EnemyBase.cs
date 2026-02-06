@@ -8,33 +8,43 @@ using UnityEngine.InputSystem.Processors;
 // Enemy BaseClass
 public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
-    protected bool enableNav = true;
+    [Header("References")]
+    [SerializeField] protected Transform player;
 
+    protected bool enableNav = true;
     protected NavMeshAgent agent;
 
     protected bool canAttack = true;
 
-    [SerializeField] protected GameObject attackHitbox;
-    [SerializeField] private Health health;
+    [SerializeField] protected Health health;
 
+    
+    private bool isActive;
+    private Rigidbody rb;
+
+    public void Activate(Transform playerTransform)
+    {
+        player = playerTransform;
+        isActive = true;
+        rb.isKinematic = false;
+    }
     protected virtual void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-     
-       
+        agent = GetComponent<NavMeshAgent>(); 
         enableNav = true;
     }
 
     protected virtual void Update()
     {
         if (health.IsDead) return;
-
     }
 
+    #region Health
     void IDamageable.TakeDmg(float dmg)
     {
         health.TakeDmg(dmg);
     }
+    #endregion
 
     #region Navigation
 

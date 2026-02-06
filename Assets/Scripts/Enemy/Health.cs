@@ -1,8 +1,7 @@
 using UnityEngine;
-using System;
 
 [RequireComponent(typeof(Healthbar))]
-public class EnemyHealth : MonoBehaviour 
+public class Health : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
@@ -17,12 +16,12 @@ public class EnemyHealth : MonoBehaviour
         IsDead = false;
     }
 
-    public void TakeDamage(float damageAmount)
+    public void TakeDmg(float dmg)
     {
         if (IsDead) return;
 
         // Subtract currentHealth by damageAmmount
-        currentHealth -= damageAmount;
+        currentHealth -= dmg;
 
         // Ensure currentHealth stays between 0 and maxHealth
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
@@ -39,10 +38,6 @@ public class EnemyHealth : MonoBehaviour
     private void Die()
     {
         IsDead = true;
-        if (OnDestroyed != null)
-            OnDestroyed.Invoke(gameObject);
         Destroy(gameObject);
     }
-
-    public event Action<GameObject> OnDestroyed;
 }
