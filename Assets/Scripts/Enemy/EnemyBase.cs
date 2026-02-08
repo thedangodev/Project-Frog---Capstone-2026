@@ -14,15 +14,35 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     protected bool canAttack = true;
 
-    [SerializeField] protected GameObject attackHitbox;
-    [SerializeField] private protected Health health;
     [Header("References")]
     [SerializeField] protected Transform player;
+
+    [SerializeField] protected GameObject attackHitbox;
+    [SerializeField] private protected Health health;
+    
 
     protected virtual void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
+        
+        // Initialize health component
+        if (health == null)
+        {
+            health = GetComponent<Health>();
+            if (health == null)
+            {
+                Debug.LogWarning($"No Health component found on {gameObject.name}. Adding one automatically.");
+                health = gameObject.AddComponent<Health>();
+                
+                //// Add Healthbar if missing (required by Health)
+                //if (GetComponent<Healthbar>() == null)
+                //{
+                //    gameObject.AddComponent<Healthbar>();
+                //}
+            }
+        }
+        
         if (player == null)
         {
             GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
@@ -41,13 +61,13 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     protected virtual void Update()
     {
-        if (health.IsDead) return;
-
+        if (health != null && health.IsDead) return;
     }
 
     void IDamageable.TakeDmg(float dmg)
     {
-        health.TakeDmg(dmg);
+        if (health != null)
+            health.TakeDmg(dmg);
     }
 
     #region Navigation

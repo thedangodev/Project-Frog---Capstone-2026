@@ -4,7 +4,7 @@ using UnityEngine;
 public class EnemyBehaviorRise : MonoBehaviour
 {
     [Header("Rise Settings")]
-    [SerializeField] private float riseHeight = 1.5f;
+    [SerializeField] private float riseHeight = 1.0f;
     [SerializeField] private float riseSpeed = 2f;
 
     private Vector3 targetPosition;

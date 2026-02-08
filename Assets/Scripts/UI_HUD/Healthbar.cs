@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class Healthbar: MonoBehaviour
 {
     [SerializeField] private Image foregroundImage;
+    [SerializeField] private Transform uiContainer; // Drag the UI child object here
     private Camera mainCamera;
 
     public void UpdateHealthBar(float maxHealth, float curHealth)
@@ -20,6 +21,10 @@ public class Healthbar: MonoBehaviour
     private void LateUpdate()
     {
         // Point the healthbar to the camera
-        transform.forward = mainCamera.transform.forward;
+        // Only rotate the UI container, not the main GameObject
+        if (uiContainer != null && mainCamera != null)
+        {
+            uiContainer.forward = mainCamera.transform.forward;
+        }
     }
 }
