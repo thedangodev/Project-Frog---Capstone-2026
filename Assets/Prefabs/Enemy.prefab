@@ -15,11 +15,10 @@ GameObject:
   - component: {fileID: 8494639530999919038}
   - component: {fileID: 6982945198088898342}
   - component: {fileID: 6635597865922019985}
-  - component: {fileID: -8664719875652962865}
   - component: {fileID: 5779863473742151273}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -94,7 +93,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!136 &634599614488036655
 CapsuleCollider:
@@ -192,20 +190,6 @@ CapsuleCollider:
   m_Height: 2.2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &-8664719875652962865
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7052711535739665740}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d01608fca163d984abac61c519dbfd34, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviorRise
-  riseHeight: 1.5
-  riseSpeed: 2
 --- !u!114 &5779863473742151273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,9 +199,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7052711535739665740}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4cf446b108eaa14c8853756853d5548, type: 3}
+  m_Script: {fileID: 11500000, guid: 761d290fbdb13bd4c88c04afa55cabe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  player: {fileID: 0}
-  moveSpeed: 2.5
-  stoppingDistance: 0.5
+  attackHitbox: {fileID: 0}
+  health: {fileID: 0}
+  player: {fileID: 4257825733195221250, guid: 5fb6197e23d3cdb4789a3d9c46c2829d, type: 3}
+  attackRange: 1

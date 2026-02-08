@@ -6,13 +6,9 @@ public class EnemyFrogSkeleton : EnemyBase
     [Header("Attack config")]
     [SerializeField] private float attackRange = 1f;
 
-
-    [SerializeField]private Transform player;
-
     protected override void Awake()
     {
         base.Awake();
-     
     }
 
     protected override void Update()
@@ -36,8 +32,5 @@ public class EnemyFrogSkeleton : EnemyBase
             return;
         }
         MoveTo(player.position);
-      
     }
-
-
 }
