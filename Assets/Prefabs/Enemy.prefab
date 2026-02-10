@@ -207,7 +207,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7052711535739665740}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d01608fca163d984abac61c519dbfd34, type: 3}
+  m_Script: {fileID: 11500000, guid: 761d290fbdb13bd4c88c04afa55cabe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviorRise
   riseHeight: 1.5

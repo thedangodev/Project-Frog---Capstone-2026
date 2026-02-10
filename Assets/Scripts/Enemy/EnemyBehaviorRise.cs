@@ -4,25 +4,25 @@ using UnityEngine;
 public class EnemyBehaviorRise : MonoBehaviour
 {
     [Header("Rise Settings")]
-    [SerializeField] private float riseHeight = 1.5f;
+    [SerializeField] private float riseHeight = 1.0f;
     [SerializeField] private float riseSpeed = 2f;
 
     private Vector3 targetPosition;
     private bool isRising = true;
 
     private Rigidbody rb;
-    private EnemyAI enemyAI;
+    private EnemyBase enemyBase;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        enemyAI = GetComponent<EnemyAI>();
+        enemyBase = GetComponent<EnemyBase>();
 
         rb.isKinematic = true;
 
-        if (enemyAI != null)
+        if (enemyBase != null)
         {
-            enemyAI.enabled = false;
+            enemyBase.enabled = false;
         }
     }
 
@@ -53,14 +53,14 @@ public class EnemyBehaviorRise : MonoBehaviour
         isRising = false;
 
 
-        if (enemyAI != null)
+        if (enemyBase != null)
         {
-            enemyAI.enabled = true;
+            enemyBase.enabled = true;
 
             EnemySpawnWaves spawner = FindObjectOfType<EnemySpawnWaves>();
             if (spawner != null)
             {
-                enemyAI.Activate(spawner.PlayerTransform);
+                enemyBase.Activate(spawner.PlayerTransform);
             }
         }
     }

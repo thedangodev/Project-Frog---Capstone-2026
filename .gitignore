@@ -101,3 +101,5 @@ InitTestScene*.unity*
 
 # Manual Ignores
 ProjectSettings/VisualScriptingSettings.asset
+/Assets/DogKnight/
+/Assets/DogKnight.meta
