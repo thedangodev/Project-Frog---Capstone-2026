@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class Healthbar: MonoBehaviour
 {
     [SerializeField] private Image foregroundImage;
-    [SerializeField] private Transform uiContainer; // Drag the UI child object here
+    [SerializeField] private Transform uiContainer;
     private Camera mainCamera;
 
     public void UpdateHealthBar(float maxHealth, float curHealth)

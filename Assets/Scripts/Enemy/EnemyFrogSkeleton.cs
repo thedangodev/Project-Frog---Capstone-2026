@@ -34,4 +34,9 @@ public class EnemyFrogSkeleton : EnemyBase
         }
         MoveTo(player.position);
     }
+
+    private void Attack()
+    {
+
+    }
 }

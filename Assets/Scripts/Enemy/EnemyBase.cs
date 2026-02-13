@@ -17,8 +17,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     protected bool canAttack = true;
 
     [Header("References")]
-    [SerializeField] protected Transform player;
-
     [SerializeField] protected GameObject attackHitbox;
     [SerializeField] private protected Health health;
     
@@ -85,18 +83,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     #endregion
 
     #region Navigation
-    private bool isActive;
-    private Rigidbody rb;
 
-    public void Activate(Transform playerTransform)
-    {
-        player = playerTransform;
-        isActive = true;
-        if (rb != null)
-        {
-            rb.isKinematic = false;
-        }
-    }
     public virtual void MoveTo(Vector3 destination)
     {
         if (!enableNav) return;
