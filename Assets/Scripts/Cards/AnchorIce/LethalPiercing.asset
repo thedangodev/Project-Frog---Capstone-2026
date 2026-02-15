@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: febd30ef35675de4399f07f18ec02aeb, type: 3}
+  m_Name: LethalPiercing
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardName: Lethal Piercing
+  description: After arrow pierces enemy (secondary fire), deal +50% / +45% / +40%
+    / +35% / +30% more damage
+  element: 1
+  rarity: 0
+  icon: {fileID: 21300000, guid: 15fbfac8ed3a55e4dbabea5a10bca77b, type: 3}
+  levelValues:
+  - 50
+  - 45
+  - 40
+  - 35
+  - 30
+  currentLevel: 4
