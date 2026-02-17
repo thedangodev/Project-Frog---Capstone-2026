@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Healthbar : MonoBehaviour
+public class EnemyHealthbar : MonoBehaviour
 {
     [SerializeField] private Image foregroundImage;
     private Camera mainCamera;

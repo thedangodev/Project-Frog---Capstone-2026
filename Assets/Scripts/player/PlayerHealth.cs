@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Healthbar))]
-public class Health : MonoBehaviour
+public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
@@ -40,4 +40,26 @@ public class Health : MonoBehaviour
         IsDead = true;
         Destroy(gameObject);
     }
+public void Heal(float amount)
+{
+    if (IsDead) return;
+
+    currentHealth += amount;
+    currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+
+    healthbar.UpdateHealthBar(maxHealth, currentHealth);
+}
+public void TongueHeal(float amount)
+{
+    if (IsDead) return;
+
+    currentHealth += amount;
+
+    // Make sure health does not exceed maxHealth
+    currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+
+    // Update the health bar UI
+    healthbar.UpdateHealthBar(maxHealth, currentHealth);
+}
+
 }

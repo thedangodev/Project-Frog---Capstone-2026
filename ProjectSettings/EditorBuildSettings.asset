@@ -15,11 +15,12 @@ EditorBuildSettings:
     path: Assets/Scenes/mainMenu.unity
     guid: 2a3dbf9e656e9344fa91f3c3394cd0c7
   - enabled: 1
-    path: Assets/Scenes/GameScene.unity
+    path: Assets/Scenes/gameScene.unity
     guid: c0f52231503f55043a8584f27ae0271e
   - enabled: 1
     path: Assets/Scenes/Credits.unity
     guid: 10e97be78451c5c41ac39b2121d4447d
   m_configObjects:
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: 40fa304db6793445f84ce6b94a8bb448, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
