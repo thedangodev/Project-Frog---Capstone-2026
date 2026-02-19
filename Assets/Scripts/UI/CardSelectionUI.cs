@@ -37,7 +37,7 @@ public class CardSelectionUI : MonoBehaviour
     {
         // For testing: Press T to show card selection
         if (Input.GetKeyDown(KeyCode.T))
-            ShowCardSelection();
+        ShowCardSelection();
     }
 
     private void ShowUI()
@@ -68,7 +68,6 @@ public class CardSelectionUI : MonoBehaviour
 
         // Ask the pool for 3 valid cards
         List<CardData> selectedCards = cardPool.GetRandomCards(3);
-
         StartCoroutine(SpawnCardsSequentially(selectedCards));
     }
 

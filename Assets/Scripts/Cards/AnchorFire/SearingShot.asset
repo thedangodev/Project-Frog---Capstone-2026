@@ -18,6 +18,7 @@ MonoBehaviour:
   rarity: 0
   icon: {fileID: 21300000, guid: 75719b0837402c44aae1ec22aa817fbf, type: 3}
   levelValues:
+  - 0
   - 30
   - 27
   - 24

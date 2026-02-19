@@ -723,8 +723,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ca83bed44e0ac5d449477cfbecf637d0, type: 2}
   - {fileID: 11400000, guid: cdb9f49fd6283f34ebe1a69419c81b99, type: 2}
   - {fileID: 11400000, guid: eb091b6072985a649a609b41ef9bb981, type: 2}
-  commonChance: 50
-  rareChance: 50
+  commonChance: 90
+  rareChance: 10
 --- !u!4 &377480841
 Transform:
   m_ObjectHideFlags: 0
@@ -3375,6 +3375,7 @@ MonoBehaviour:
   cardContainer: {fileID: 1021802297}
   cardUIPrefab: {fileID: 7598020870873114302, guid: 91de5ea4df9ed4c44be87c60cb904e11, type: 3}
   cardPool: {fileID: 377480840}
+  pauseManager: {fileID: 0}
 --- !u!225 &1955572639
 CanvasGroup:
   m_ObjectHideFlags: 0

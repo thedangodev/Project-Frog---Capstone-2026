@@ -14,12 +14,17 @@ public class CardPoolManager : MonoBehaviour
 
     private void Awake()
     {
-        // Initialize pool
-        availableCards = new List<CardData>(allCards);
+        ResetAllCards();
+    }
 
-        // Reset all card levels at the start of a run
-        foreach (CardData card in availableCards)
+    public void ResetAllCards()
+    {
+        // Reset levels
+        foreach (CardData card in allCards)
             card.CurrentLevel = 0;
+
+        // Reset pool
+        availableCards = new List<CardData>(allCards);
     }
 
     public List<CardData> GetRandomCards(int count)

@@ -33,24 +33,17 @@ public class CardUI : MonoBehaviour
         // Set visuals
         icon.sprite = data.Icon;
         title.text = data.CardName;
-        description.text = data.GetDescriptionForLevel(data.CurrentLevel);
 
-        // Set level text
-        int nextLevel = data.CurrentLevel + 1;
+        int nextLevel = Mathf.Clamp(data.CurrentLevel + 1, 0, data.MaxLevel - 1);
 
-        if (data.MaxLevel == 1)
-        {
+        // Description with next level values
+        description.text = data.GetDescriptionForLevel(nextLevel);
+
+        // Level text
+        if (nextLevel >= data.MaxLevel - 1)
             levelText.text = "MAX";
-        }
-       
-        else if (nextLevel >= data.MaxLevel)
-        {
-            levelText.text = "MAX";
-        }
         else
-        {
-            levelText.text = "Lvl " + nextLevel;
-        }
+            levelText.text = "Lvl " + (nextLevel);
 
         // Set frame based on element
         switch (data.Element)

@@ -42,28 +42,19 @@ public class CardData : ScriptableObject
     public int MaxLevel => levelValues != null ? levelValues.Length : 1;
 
     // Maxed when currentLevel == MaxLevel
-    public bool IsMaxed => currentLevel >= MaxLevel;
+    public bool IsMaxed => currentLevel >= MaxLevel - 1;
 
     public int CurrentLevel
     {
         get => currentLevel;
-        set => currentLevel = Mathf.Clamp(value, 0, MaxLevel);
-    }
-
-    public float CurrentValue
-    {
-        get
-        {
-            int index = Mathf.Clamp(currentLevel - 1, 0, MaxLevel - 1);
-            return levelValues != null ? levelValues[index] : 0f;
-        }
+        set => currentLevel = Mathf.Clamp(value, 0, MaxLevel - 1);
     }
 
     public float GetTotalValueUpToLevel(int level)
     {
-        float total = 0f;
-
         level = Mathf.Clamp(level, 0, MaxLevel - 1);
+
+        float total = 0f;
 
         for (int i = 0; i <= level; i++)
             total += levelValues[i];
