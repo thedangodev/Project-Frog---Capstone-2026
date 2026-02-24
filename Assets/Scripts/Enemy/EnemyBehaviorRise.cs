@@ -57,11 +57,11 @@ public class EnemyBehaviorRise : MonoBehaviour
         {
             enemyBase.enabled = true;
 
-            EnemySpawnWaves spawner = FindObjectOfType<EnemySpawnWaves>();
-            if (spawner != null)
-            {
-                enemyBase.Activate(spawner.PlayerTransform);
-            }
+            //EnemySpawnWaves spawner = FindObjectOfType<EnemySpawnWaves>();
+            //if (spawner != null)
+            //{
+            //    enemyBase.Activate(spawner.PlayerTransform);
+            //}
         }
     }
 }

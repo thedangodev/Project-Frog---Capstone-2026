@@ -59,6 +59,12 @@ public class PlayerMovement : MonoBehaviour
         // Dash movement
         if (isDashing)
         {
+
+            PlayerGrapple playerGrapple = GetComponent<PlayerGrapple>();
+            if (playerGrapple != null && playerGrapple.IsGrappling)
+            {
+                playerGrapple.ReleaseGrapple();
+            }
             dashTimer -= Time.fixedDeltaTime;
             rb.MovePosition(rb.position + dashDirection * (dashDistance / dashDuration) * Time.fixedDeltaTime);
             if (dashTimer <= 0f)

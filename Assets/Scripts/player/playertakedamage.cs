@@ -1,117 +1,65 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
-[RequireComponent(typeof(Health))]
-public class PlayerTakeDamage : MonoBehaviour
+[RequireComponent(typeof(Collider))]
+public class EnemyDamageHitbox : MonoBehaviour
 {
-    [SerializeField] private float damageAmount = 10f;
-    [SerializeField] private float damageInterval = 4f;
+    [SerializeField] private float damageAmount = 25f;
 
-    private Health playerHealth;
-    private bool isTouchingEnemy = false;
-    private float nextDamageTime = 0f;
+    private Collider hitboxCollider;
+
+    // Tracks who was already damaged during this activation
+    private readonly HashSet<GameObject> damagedThisEntry = new();
+
+    private bool lastColliderState;
 
     private void Awake()
     {
-        playerHealth = GetComponent<Health>();
+        hitboxCollider = GetComponent<Collider>();
+        hitboxCollider.isTrigger = true;
+        lastColliderState = hitboxCollider.enabled;
     }
 
-    // -------------------------
-    //  TRIGGER SUPPORT
-    // -------------------------
-    private void OnTriggerEnter(Collider other)
+    private void Update()
     {
-        if (IsValidDamageSource(other))
-            StartDamage();
+        // If collider just got disabled → reset hit memory
+        if (lastColliderState && !hitboxCollider.enabled)
+        {
+            damagedThisEntry.Clear();
+        }
+
+        lastColliderState = hitboxCollider.enabled;
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (IsValidDamageSource(other))
-            ContinueDamage();
+        GameObject root = other.transform.root.gameObject;
+
+        if (!root.CompareTag("Player")) return;
+
+        ApplyDamage(root);
+    }
+
+    private void ApplyDamage(GameObject target)
+    {
+        if (damagedThisEntry.Contains(target)) return;
+
+        Health health = target.GetComponentInChildren<Health>();
+        if (health != null && !health.IsDead)
+        {
+            health.TakeDmg(damageAmount);
+            damagedThisEntry.Add(target);
+            Debug.Log($"{target.name} took {damageAmount} damage.");
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (IsEnemyRelated(other))
-            StopDamage();
-    }
+        GameObject root = other.transform.root.gameObject;
 
-    // -------------------------
-    //  COLLISION SUPPORT
-    // -------------------------
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (IsValidDamageSource(collision.collider))
-            StartDamage();
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (IsValidDamageSource(collision.collider))
-            ContinueDamage();
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        if (IsEnemyRelated(collision.collider))
-            StopDamage();
-    }
-
-    // -------------------------
-    //  DAMAGE LOGIC
-    // -------------------------
-    private void StartDamage()
-    {
-        if (!isTouchingEnemy)
+        if (damagedThisEntry.Contains(root))
         {
-            isTouchingEnemy = true;
-            playerHealth.TakeDmg(damageAmount);
-            nextDamageTime = Time.time + damageInterval;
+            damagedThisEntry.Remove(root);
         }
-    }
-
-    private void ContinueDamage()
-    {
-        if (isTouchingEnemy && Time.time >= nextDamageTime)
-        {
-            playerHealth.TakeDmg(damageAmount);
-            nextDamageTime = Time.time + damageInterval;
-        }
-    }
-
-    private void StopDamage()
-    {
-        isTouchingEnemy = false;
-    }
-
-    // -------------------------
-    //  FILTERING LOGIC
-    // -------------------------
-    private bool IsValidDamageSource(Collider col)
-    {
-        // Case 1: Direct hitbox
-        if (col.CompareTag("EnemyHitbox") && col.enabled)
-            return true;
-
-        // Case 2: Enemy root, but ONLY if it has NO hitbox children
-        if (col.CompareTag("Enemy"))
-        {
-            // Check for any active hitbox in children
-            Collider[] hitboxes = col.GetComponentsInChildren<Collider>(true);
-            foreach (var hb in hitboxes)
-            {
-                if (hb.CompareTag("EnemyHitbox") && hb.enabled)
-                    return false; // hitbox exists → ignore root
-            }
-
-            return true; // no hitbox found → root damage allowed
-        }
-
-        return false;
-    }
-
-    private bool IsEnemyRelated(Collider col)
-    {
-        return col.CompareTag("Enemy") || col.CompareTag("EnemyHitbox");
     }
 }
