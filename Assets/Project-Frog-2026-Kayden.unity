@@ -625,6 +625,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1257484185}
   - component: {fileID: 1257484184}
+  - component: {fileID: 1257484192}
   - component: {fileID: 1257484183}
   - component: {fileID: 1257484186}
   - component: {fileID: 1257484187}
@@ -805,6 +806,71 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Healthbar
   foregroundImage: {fileID: 0}
+--- !u!114 &1257484192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1257484182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8836e5207a651448c96a3ddc42122b0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatStatistics
+  playerSpeed: 6
+  tongueMaxLength: 10
+  tongueExtendSpeed: 20
+  tongueRetractSpeed: 25
+  enemyDamage: 25
+  tongueHealAmount: 20
+  arrowSpeed: 40
+  attackSpeed: 1
+--- !u!1 &1257828450
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1257828452}
+  - component: {fileID: 1257828451}
+  m_Layer: 0
+  m_Name: DebugManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1257828451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1257828450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11d9ac8b84d4d4df9b1b2400039dd30c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DebugController
+  combatStats: {fileID: 0}
+--- !u!4 &1257828452
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1257828450}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1298193696
 GameObject:
   m_ObjectHideFlags: 0
@@ -1136,3 +1202,4 @@ SceneRoots:
   - {fileID: 23698974}
   - {fileID: 1257484185}
   - {fileID: 1341660608}
+  - {fileID: 1257828452}
