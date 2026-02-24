@@ -1,9 +1,8 @@
 using UnityEngine;
 
-/// <summary>
-/// Camera shake effect - can be triggered by damage, explosions, etc.
-/// This implementation produces a subtle back-and-forth shake on the X axis.
-/// </summary>
+/// Camera shake effect - can be triggered by the player taking damage.
+/// Implementation produces a subtle back-and-forth shake on the X axis.
+
 public class CameraShakeEffect : CameraEffectBase
 {
     [Header("Shake Settings")]
@@ -40,18 +39,13 @@ public class CameraShakeEffect : CameraEffectBase
         return Vector3.zero;
     }
 
-    /// <summary>
-    /// Triggers a camera shake with the configured duration & magnitude.
-    /// </summary>
+
     public void TriggerShake()
     {
         shakeTimer = shakeDuration;
         elapsed = 0f;
     }
 
-    /// <summary>
-    /// Triggers a camera shake with custom parameters.
-    /// </summary>
     public void TriggerShake(float duration, float magnitude)
     {
         if (duration > 0f) shakeDuration = duration;
