@@ -1,4 +1,5 @@
-Project Frog Unity game / TFS capstone Project.
+Project: Frog
+Capstone 2026
 Unity Version 6.3 (6000.3.9f1)
 
 Always pull the latest changes from the main branch before creating a new branch.
