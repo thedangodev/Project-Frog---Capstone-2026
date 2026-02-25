@@ -96,7 +96,13 @@ public class CameraController : MonoBehaviour
         return null;
     }
 
-    // Controller API: trigger shake (controller owns effects)
+    // Public accessor for effects
+    public Vector3 GetBasePosition()
+    {
+        return basePosition;
+    }
+
+    // Controller API: trigger shake
     public void TriggerShake()
     {
         var shake = GetEffect<CameraShakeEffect>() ?? GetComponentInChildren<CameraShakeEffect>(true);
@@ -130,10 +136,10 @@ public abstract class CameraEffectBase : MonoBehaviour
     public abstract Vector3 ApplyEffect(float deltaTime);
 
     /* FUTURE CAMERA EFFECTS
-     * Camera Shake
+     Camera Shake (Implemented)
+     Camera Pan (Implemented)
      Raindrops
-    Lens Flare
-    Damage Vignette
-    Camera Pan
+     Lens Flare
+     Damage Vignette
     */
 }
