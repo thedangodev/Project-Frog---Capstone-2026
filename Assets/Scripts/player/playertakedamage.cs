@@ -10,9 +10,16 @@ public class PlayerTakeDamage : MonoBehaviour
     private bool isTouchingEnemy = false;
     private float nextDamageTime = 0f;
 
+    private CameraController cameraController;
+    private CameraShakeEffect directCameraShake; // fallback if controller not present
+
     private void Awake()
     {
         playerHealth = GetComponent<Health>();
+
+        // Cache CameraController for shake Effect on damaged
+        cameraController = Object.FindAnyObjectByType<CameraController>();
+
     }
 
     // -------------------------
@@ -67,6 +74,8 @@ public class PlayerTakeDamage : MonoBehaviour
             isTouchingEnemy = true;
             playerHealth.TakeDmg(damageAmount);
             nextDamageTime = Time.time + damageInterval;
+
+                cameraController.TriggerShake();
         }
     }
 
@@ -76,6 +85,8 @@ public class PlayerTakeDamage : MonoBehaviour
         {
             playerHealth.TakeDmg(damageAmount);
             nextDamageTime = Time.time + damageInterval;
+
+                cameraController.TriggerShake();
         }
     }
 
