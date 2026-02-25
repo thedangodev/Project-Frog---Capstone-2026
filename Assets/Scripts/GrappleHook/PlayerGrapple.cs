@@ -1,6 +1,8 @@
-using Mono.Cecil;
 using UnityEngine;
 
+//Nick: Attach this to the player
+//Attach the GrappleTower script to the anchor
+//The player will need a line renderer for the rope, make one
 
 public class PlayerGrapple : MonoBehaviour
 {
