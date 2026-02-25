@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: Pyronova
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: Pyronova
-  descriptionTemplate: 'Explosion damage +{value}%
-
-'
+  descriptionTemplate: "Explosion Damage +{old}% \u2192 +{new}%.\r\n\n"
   element: 0
   rarity: 0
   icon: {fileID: 21300000, guid: 2a47793a3b5798144b9ad26b13b77bed, type: 3}

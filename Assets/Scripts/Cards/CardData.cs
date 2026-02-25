@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum AnchorElement
 {
@@ -60,6 +60,40 @@ public class CardData : ScriptableObject
             total += levelValues[i];
 
         return total;
+    }
+
+    public (float oldValue, float newValue) GetLevelTransition(int nextLevel)
+    {
+        int oldLevel = Mathf.Clamp(nextLevel - 1, 0, MaxLevel - 1);
+        int newLevel = Mathf.Clamp(nextLevel, 0, MaxLevel - 1);
+
+        float oldTotal = GetTotalValueUpToLevel(oldLevel);
+        float newTotal = GetTotalValueUpToLevel(newLevel);
+
+        return (oldTotal, newTotal);
+    }
+
+    public string GetTransitionDescription(int nextLevel)
+    {
+        // If maxed, show last value only
+        if (nextLevel >= MaxLevel)
+        {
+            float finalValue = GetTotalValueUpToLevel(MaxLevel - 1);
+            return $"{cardName} {finalValue}% (MAX)";
+        }
+
+        var (oldValue, newValue) = GetLevelTransition(nextLevel);
+
+        // Uses template if provided
+        if (!string.IsNullOrEmpty(descriptionTemplate))
+        {
+            return descriptionTemplate
+                .Replace("{old}", oldValue.ToString())
+                .Replace("{new}", newValue.ToString());
+        }
+
+        // Default fallback
+        return $"{cardName} {oldValue}% → {newValue}%";
     }
 
     public string GetDescriptionForLevel(int level)

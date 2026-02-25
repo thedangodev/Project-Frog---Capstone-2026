@@ -37,7 +37,7 @@ public class CardUI : MonoBehaviour
         int nextLevel = Mathf.Clamp(data.CurrentLevel + 1, 0, data.MaxLevel - 1);
 
         // Description with next level values
-        description.text = data.GetDescriptionForLevel(nextLevel);
+        description.text = data.GetTransitionDescription(nextLevel);
 
         // Level text
         if (nextLevel >= data.MaxLevel - 1)

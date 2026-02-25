@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: CyroFragility
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: Cryo Fragility
-  descriptionTemplate: 'If the enemy is slowed, increase all damage dealt by +{value}%.
-
-'
+  descriptionTemplate: "If the enemy is slowed, increase all damage dealt by +{old}%
+    \u2192 +{new}%.\n"
   element: 1
   rarity: 0
   icon: {fileID: 21300000, guid: f05f48e971da1884ca4ac6701bddbf4d, type: 3}
@@ -27,4 +26,4 @@ MonoBehaviour:
   - 14
   - 12
   - 10
-  currentLevel: 0
+  currentLevel: 1
