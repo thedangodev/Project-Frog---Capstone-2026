@@ -113,24 +113,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "TongueAttack",
-                    "type": "Button",
-                    "id": "55e12fbb-f771-4b22-a001-bdf08e949f0d",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "ToggleDebug",
-                    "type": "Button",
-                    "id": "bedbe807-b2cb-4390-a462-95abaecdb54c",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -549,28 +531,6 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Dash",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f8e3526a-b354-40d3-b8e6-a4f44846edc1",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "TongueAttack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "daaf15b7-e1b5-4c02-8b29-b6ab5011da1b",
-                    "path": "<Keyboard>/#(`)",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "ToggleDebug",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
