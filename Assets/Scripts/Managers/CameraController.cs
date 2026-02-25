@@ -6,9 +6,14 @@ public class CameraController : MonoBehaviour
 {
     [Header("Camera Settings")]
     [SerializeField] private Transform target;
-    [SerializeField] private Vector3 cameraAngle = new Vector3(45f, 0f, 0f);
-    [SerializeField] private Vector3 cameraPosition = new Vector3(0f, 20f, -20f);
+    [SerializeField] private Vector3 cameraRotation = new Vector3(35f, 0f, 0f); 
+    [SerializeField] private Vector3 cameraPosition = new Vector3(0f, 5f, -20f);
     [SerializeField] private float followSpeed = 10f;
+    [SerializeField] private float rotationSpeed = 10f; 
+
+
+private bool rotateToTargetFirst = true;
+private float rotationAlignThreshold = 1f; // degrees
 
     [Header("Camera Effects")]
     [SerializeField] private List<CameraEffectBase> cameraEffects = new List<CameraEffectBase>();
@@ -17,15 +22,18 @@ public class CameraController : MonoBehaviour
     private Quaternion baseRotation;
     private Vector3 effectOffset;
 
+
+    private bool hasRotatedToTarget;
+
     /* private Vector3 offset = new Vector3(0, 20, -20); */ //can be used in the future
 
     private void Start()
     {
-        // set initial camera angle
-        baseRotation = Quaternion.Euler(cameraAngle);
+        // set initial camera rotation
+        baseRotation = Quaternion.Euler(cameraRotation);
         transform.rotation = baseRotation;
 
-        // fallback - find target if not assigned in the inspector
+        // Find target if not assigned in the inspector
         if (target == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -35,13 +43,14 @@ public class CameraController : MonoBehaviour
             }
         }
 
-        // Auto-discover CameraEffectBase components on this GameObject and children
         if (cameraEffects == null || cameraEffects.Count == 0)
         {
             var found = GetComponentsInChildren<CameraEffectBase>(true);
             if (found != null && found.Length > 0)
                 cameraEffects = new List<CameraEffectBase>(found);
         }
+
+        hasRotatedToTarget = !rotateToTargetFirst;
     }
 
     void LateUpdate()
@@ -49,7 +58,32 @@ public class CameraController : MonoBehaviour
         if (target == null) return;
         if (target == transform) return; // Avoids camera self-targeting at runtime
 
-        Vector3 desiredPosition = target.position + cameraPosition;
+
+        if (!hasRotatedToTarget && rotateToTargetFirst)
+        {
+
+            Vector3 dirToTarget = target.position - transform.position;
+            if (dirToTarget.sqrMagnitude > 0f)
+            {
+                Quaternion lookRot = Quaternion.LookRotation(dirToTarget.normalized, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, rotationSpeed * Time.deltaTime);
+
+                float angle = Quaternion.Angle(transform.rotation, lookRot);
+                if (angle <= rotationAlignThreshold)
+                {
+                    hasRotatedToTarget = true;
+ 
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+
+        Quaternion rot = Quaternion.Euler(cameraRotation);
+        Vector3 rotatedOffset = rot * cameraPosition;
+        Vector3 desiredPosition = target.position + rotatedOffset;
 
         // smooth following
         basePosition = Vector3.Lerp(transform.position, desiredPosition, followSpeed * Time.deltaTime);
@@ -63,6 +97,15 @@ public class CameraController : MonoBehaviour
             }
         }
         transform.position = basePosition + effectOffset; // applies final position with effects
+
+        // Update rotation to match cameraRotation 
+        Quaternion targetRotation = Quaternion.Euler(cameraRotation);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    public void ResetRotateToTargetSequence()
+    {
+        hasRotatedToTarget = !rotateToTargetFirst ? true : false;
     }
 
     // Adds effect at runtime
@@ -132,7 +175,7 @@ public class CameraController : MonoBehaviour
 [System.Serializable]
 public abstract class CameraEffectBase : MonoBehaviour
 {
-    // Applies camera effect - returns positional offset to add to camera this frame.
+    // Applies camera effect - returns positional offset.
     public abstract Vector3 ApplyEffect(float deltaTime);
 
     /* FUTURE CAMERA EFFECTS

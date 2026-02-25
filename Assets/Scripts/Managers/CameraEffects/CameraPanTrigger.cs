@@ -2,6 +2,7 @@ using UnityEngine;
 
 /// Attach script to trigger colliders you want to act as camera pan triggers.
 /// Make sure the GameObject is tagged "CameraPan".
+/// Assign GameObject transform - POI (Point of Interest) in the inspector
 [RequireComponent(typeof(Collider))]
 public class CameraPanTrigger : MonoBehaviour
 {
