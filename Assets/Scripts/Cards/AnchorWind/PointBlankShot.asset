@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: PointBlankShot
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: Point blank shot
-  descriptionTemplate: "Deal +{old}% \u2192 +{new}% more damage to enemies within
-    the anchor radius.\n"
+  descriptionTemplate: 'Deal +{old}% -> +{new}% more damage to enemies within the
+    anchor radius.
+
+'
   element: 2
   rarity: 0
   icon: {fileID: 21300000, guid: 8ca715d24e15dcc4684d3618a27c0c53, type: 3}

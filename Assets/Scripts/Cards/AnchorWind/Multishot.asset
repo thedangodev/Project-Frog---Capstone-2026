@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Multishot
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: Multishot
-  descriptionTemplate: "Increasing projectile count by +{old}% \u2192 +{new}%.\n"
+  descriptionTemplate: 'Increasing projectile count by +{old}% -> +{new}%.
+
+'
   element: 2
   rarity: 0
   icon: {fileID: 21300000, guid: 8e3c001e56e61f44693ddfea5d28760f, type: 3}

@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Rapidfire
   m_EditorClassIdentifier: Assembly-CSharp::CardData
   cardName: Rapidfire
-  descriptionTemplate: "Increase attack speed +{old}% \u2192 +{new}%.\n"
+  descriptionTemplate: 'Increase attack speed +{old}% -> +{new}%.
+
+'
   element: 2
   rarity: 0
   icon: {fileID: 21300000, guid: 7caa48284a62171468baff8e57b1084d, type: 3}
