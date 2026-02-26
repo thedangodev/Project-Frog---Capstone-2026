@@ -9,12 +9,14 @@ public class FrogTongue : MonoBehaviour
     [SerializeField] private float tongueWidth = 0.3f;
 
     private float currentLength = 0f;
-    public bool extending = false; //keep public 
-    public bool retracting = false; //keep public
+
+    public bool extending = false;   // keep public
+    public bool retracting = false;  // keep public
 
     public void BeginTongue()
     {
         if (retracting) return;
+
         extending = true;
         retracting = false;
     }
@@ -30,19 +32,33 @@ public class FrogTongue : MonoBehaviour
 
     private void Update()
     {
+        // Input (from Script 1)
+        if (Input.GetButtonDown("Fire2"))
+        {
+            BeginTongue();
+        }
+
+        if (Input.GetButtonUp("Fire2"))
+        {
+            EndTongue();
+        }
+
+        // Tongue movement logic (from Script 2)
         if (extending)
         {
             currentLength += extendSpeed * Time.deltaTime;
+
             if (currentLength >= maxLength)
             {
                 currentLength = maxLength;
                 extending = false;
                 EndTongue();
             }
-        } 
+        }
         else if (retracting)
         {
             currentLength -= retractSpeed * Time.deltaTime;
+
             if (currentLength <= 0f)
             {
                 currentLength = 0f;
@@ -59,4 +75,3 @@ public class FrogTongue : MonoBehaviour
         tongueMesh.localPosition = new Vector3(0, 0, currentLength / 2f);
     }
 }
-
