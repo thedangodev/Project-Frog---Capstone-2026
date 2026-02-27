@@ -46,10 +46,15 @@ public class PlayerTakeDamage : MonoBehaviour
     {
         // Cache references
         playerHealth = GetComponent<Health>();
+        playerMovement = GetComponent<PlayerMovement>();
+        rb = GetComponent<Rigidbody>();
+        playerImmortality = GetComponent<PlayerImmortality>();
 
-        // Cache CameraController for shake Effect on damaged
-        cameraController = Object.FindAnyObjectByType<CameraController>();
-
+        // Cache all renderers to flash all parts of the player
+        cachedRenderers = GetComponentsInChildren<Renderer>();
+        originalColors = new Color[cachedRenderers.Length];
+        for (int i = 0; i < cachedRenderers.Length; i++)
+            originalColors[i] = cachedRenderers[i].material.color;
     }
 
     /// <summary>
@@ -87,19 +92,7 @@ public class PlayerTakeDamage : MonoBehaviour
         if (knockbackCoroutine != null)
             StopCoroutine(knockbackCoroutine);
 
-    // -------------------------
-    //  DAMAGE LOGIC
-    // -------------------------
-    private void StartDamage()
-    {
-        if (!isTouchingEnemy)
-        {
-            isTouchingEnemy = true;
-            playerHealth.TakeDmg(damageAmount);
-            nextDamageTime = Time.time + damageInterval;
-
-                cameraController.TriggerShake();
-        }
+        knockbackCoroutine = StartCoroutine(KnockbackRoutine(direction.normalized, distance));
     }
 
      /// <summary>

@@ -68,6 +68,7 @@ GameObject:
   - component: {fileID: 8494639530999919038}
   - component: {fileID: -8664719875652962865}
   - component: {fileID: 4700711488213680328}
+  - component: {fileID: -1992746306456541990}
   - component: {fileID: 3860380783638562474}
   m_Layer: 0
   m_Name: Enemy
@@ -147,6 +148,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!136 &634599614488036655
 CapsuleCollider:
@@ -210,8 +212,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 761d290fbdb13bd4c88c04afa55cabe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviorRise
-  riseHeight: 1.5
-  riseSpeed: 2
+  player: {fileID: 0}
+  attackHitbox: {fileID: 0}
+  health: {fileID: 0}
+  attackRange: 1
 --- !u!114 &4700711488213680328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -244,6 +248,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   useNavMeshAgent: 1
+--- !u!114 &-1992746306456541990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7052711535739665740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dec38341ad6d353458e61dec4ae1d12c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TESTEnemyDamageOnCollision
+  damageAmount: 10
+  knockbackDistance: 5
 --- !u!195 &3860380783638562474
 NavMeshAgent:
   m_ObjectHideFlags: 0
