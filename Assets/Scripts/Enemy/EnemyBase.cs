@@ -10,9 +10,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
     [Header("References")]
     [SerializeField] protected Transform player;
+    public Transform Player => player;
 
     protected bool enableNav = true;
     protected NavMeshAgent agent;
+    public NavMeshAgent Agent => agent;
 
     protected bool canAttack = true;
 
