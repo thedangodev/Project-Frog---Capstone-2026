@@ -1,20 +1,50 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
+/// <summary>
+/// Handles taking damage, i-frames, knockback, and flashing visuals for the player.
+/// </summary>
+[RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(Health))]
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerImmortality))]
 public class PlayerTakeDamage : MonoBehaviour
 {
-    [SerializeField] private float damageAmount = 10f;
-    [SerializeField] private float damageInterval = 4f;
+    [Header("Damage Settings")]
+    [Tooltip("How long after taking damage until the player can be damaged again (i-frames/cooldown).")]
+    [SerializeField] private float immortalityTime = 1f;
 
+    [Tooltip("Knockback speed in meters per second.")]
+    [SerializeField] private float knockbackSpeed = 20f;
+
+    [Tooltip("Power of the knockback ease-out curve. Higher = snappier start, slower end.")]
+    [SerializeField] private float knockbackEasePower = 2f;
+
+    [Header("Visual Feedback")]
+    [Tooltip("Red flashes per second during immortality time.")]
+    [SerializeField] private float flashFrequency = 10f;
+
+    // References
     private Health playerHealth;
-    private bool isTouchingEnemy = false;
-    private float nextDamageTime = 0f;
+    private PlayerMovement playerMovement;
+    private PlayerImmortality playerImmortality;
+    private Rigidbody rb;
+    private Renderer[] cachedRenderers;
+    private Color[] originalColors;
+
+    // I-frame timing
+    private float nextAllowedDamageTime = 0f;
+
+    // Coroutine handles to safely stop overlapping effects
+    private Coroutine flashCorountine;
+    private Coroutine knockbackCoroutine;
 
     private CameraController cameraController;
     private CameraShakeEffect directCameraShake; // fallback if controller not present
 
     private void Awake()
     {
+        // Cache references
         playerHealth = GetComponent<Health>();
 
         // Cache CameraController for shake Effect on damaged
@@ -22,47 +52,40 @@ public class PlayerTakeDamage : MonoBehaviour
 
     }
 
-    // -------------------------
-    //  TRIGGER SUPPORT
-    // -------------------------
-    private void OnTriggerEnter(Collider other)
+    /// <summary>
+    /// Attempts to apply damage and knockback. Will not apply if within i-frames.
+    /// </summary>
+    /// <param name="damageAmount">Amount of damage to apply.</param>
+    /// <param name="knockDirection">Direction to knock the player.</param>
+    /// <param name="knockbackDistance">Distance the player should be knocked back.</param>
+    public void TryApplyDamageAndKnockback(float damageAmount, Vector3 knockDirection, float knockbackDistance)
     {
-        if (IsValidDamageSource(other))
-            StartDamage();
+        // Check player immortality
+        if (playerImmortality.IsImmortal)
+            return;
+
+        // Check i-frame
+        if (Time.time < nextAllowedDamageTime)
+            return;
+
+        // Start i-frames
+        nextAllowedDamageTime = Time.time + Mathf.Max(0f, immortalityTime);
+
+        // Apply health damage
+        playerHealth.TakeDmg(damageAmount);
+
+        // Start knockback and flash coroutines
+        StartKnockback(knockDirection, knockbackDistance);
+        StartFlash();
     }
 
-    private void OnTriggerStay(Collider other)
+    /// <summary>
+    /// Starts knockback coroutine, stopping any existing knockback.
+    /// </summary>
+    private void StartKnockback(Vector3 direction, float distance)
     {
-        if (IsValidDamageSource(other))
-            ContinueDamage();
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (IsEnemyRelated(other))
-            StopDamage();
-    }
-
-    // -------------------------
-    //  COLLISION SUPPORT
-    // -------------------------
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (IsValidDamageSource(collision.collider))
-            StartDamage();
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (IsValidDamageSource(collision.collider))
-            ContinueDamage();
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        if (IsEnemyRelated(collision.collider))
-            StopDamage();
-    }
+        if (knockbackCoroutine != null)
+            StopCoroutine(knockbackCoroutine);
 
     // -------------------------
     //  DAMAGE LOGIC
@@ -79,50 +102,82 @@ public class PlayerTakeDamage : MonoBehaviour
         }
     }
 
-    private void ContinueDamage()
+     /// <summary>
+     /// Moves the player using Rigidbody.MovePosition with ease-out, based on distance and knockback speed.
+     /// Runs in FixedUpdate for physics consistency.
+     /// </summary>
+     private IEnumerator KnockbackRoutine(Vector3 dir, float distance)
+     {
+         // Prevent player movement during knockback
+         playerMovement.StopMovement();
+
+         Vector3 start = rb.position;
+         Vector3 target = start + dir * distance;
+
+         // Duration is based on distance and speed
+         float duration = Mathf.Max(0.01f, distance / knockbackSpeed);
+       float elapsed = 0f;
+
+       while (elapsed < duration)
+       {
+           float t = elapsed / duration;
+
+           // Ease-out interpolation (fast start, slow end)
+           float easedT = 1f - Mathf.Pow(1f - t, knockbackEasePower);
+
+           // Move Rigidbody to interpolated position
+           rb.MovePosition(Vector3.Lerp(start, target, easedT));
+
+           elapsed += Time.fixedDeltaTime;
+
+           // Wait for the next physics step
+           yield return new WaitForFixedUpdate();
+       }
+
+       // Snap exactly to target to prevent drift
+       rb.MovePosition(target);
+
+       // Resume player movement
+       playerMovement.ResumeMovement();
+   }
+
+    /// <summary>
+    /// Starts flashing the player’s renderers. Stops existing flash coroutine if running.
+    /// </summary>
+    private void StartFlash()
     {
-        if (isTouchingEnemy && Time.time >= nextDamageTime)
+        if (cachedRenderers.Length == 0 || flashFrequency <= 0f)
+            return;
+
+        if (flashCorountine != null)
+            StopCoroutine(flashCorountine);
+
+        flashCorountine = StartCoroutine(FlashRoutine());
+    }
+
+    /// <summary>
+    /// Flashes all cached renderers red/normal during i-frame period.
+    /// </summary>
+    private IEnumerator FlashRoutine()
+    {
+        // Time between color toggles
+        float interval = 1f / flashFrequency / 2f;
+        bool isRed = false;
+
+        while (Time.time < nextAllowedDamageTime)
         {
-            playerHealth.TakeDmg(damageAmount);
-            nextDamageTime = Time.time + damageInterval;
+            isRed = !isRed;
 
-                cameraController.TriggerShake();
-        }
-    }
+            for (int i = 0; i < cachedRenderers.Length; i++)
+                cachedRenderers[i].material.color = isRed ? Color.red : originalColors[i];
 
-    private void StopDamage()
-    {
-        isTouchingEnemy = false;
-    }
-
-    // -------------------------
-    //  FILTERING LOGIC
-    // -------------------------
-    private bool IsValidDamageSource(Collider col)
-    {
-        // Case 1: Direct hitbox
-        if (col.CompareTag("EnemyHitbox") && col.enabled)
-            return true;
-
-        // Case 2: Enemy root, but ONLY if it has NO hitbox children
-        if (col.CompareTag("Enemy"))
-        {
-            // Check for any active hitbox in children
-            Collider[] hitboxes = col.GetComponentsInChildren<Collider>(true);
-            foreach (var hb in hitboxes)
-            {
-                if (hb.CompareTag("EnemyHitbox") && hb.enabled)
-                    return false; // hitbox exists → ignore root
-            }
-
-            return true; // no hitbox found → root damage allowed
+            yield return new WaitForSeconds(interval);
         }
 
-        return false;
-    }
+        // Ensure colors are restored at the end
+        for (int i = 0; i < cachedRenderers.Length; i++)
+            cachedRenderers[i].material.color = originalColors[i];
 
-    private bool IsEnemyRelated(Collider col)
-    {
-        return col.CompareTag("Enemy") || col.CompareTag("EnemyHitbox");
+        flashCorountine = null;
     }
 }

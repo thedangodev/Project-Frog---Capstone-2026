@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Healthbar))]
 public class Health : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
@@ -11,7 +10,14 @@ public class Health : MonoBehaviour
 
     private void Awake()
     {
-        healthbar = GetComponent<Healthbar>();
+        healthbar = GetComponentInChildren<Healthbar>();
+
+        if (healthbar != null)
+        {
+            Debug.LogError(
+                $"Health on {gameObject.name} requires a child HealthBar.", this);
+        }
+
         currentHealth = maxHealth;
         IsDead = false;
     }

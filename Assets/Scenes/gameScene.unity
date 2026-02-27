@@ -3219,15 +3219,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 692011066797079519, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 80.25153
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 692011066797079519, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.16
+      value: 1.01
       objectReference: {fileID: 0}
     - target: {fileID: 692011066797079519, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 74.70647
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 692011066797079519, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3271,6 +3271,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7052711535739665740, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 1629458656}
     - targetCorrespondingSourceObject: {fileID: 7052711535739665740, guid: 37cafe6e2fa47b2499a86a44bc76c42c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1629458647}
@@ -3653,6 +3656,22 @@ PrefabInstance:
     - target: {fileID: 7555014404437206304, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8197622151103158488, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: flashCount
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8197622151103158488, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: knockbackSpeed
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8197622151103158488, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: knockbackDistance
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8197622151103158488, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
+      propertyPath: knockbackDuration
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3009763174011981018, guid: 3609a38cd7a481447b5ec88785d60e36, type: 3}
