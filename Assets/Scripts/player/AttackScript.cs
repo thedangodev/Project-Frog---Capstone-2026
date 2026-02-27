@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class AttackScript : MonoBehaviour
 {
@@ -13,54 +12,27 @@ public class AttackScript : MonoBehaviour
     [SerializeField] private float fireCooldown = 0.5f;
     private float lastFireTime = -999f;
 
-    private PlayerInputActions input;
-    private float chargeTimer;
-    private bool isCharging;
+    [Header("Tongue Attack")]
     [SerializeField] private FrogTongue frogTongue;
+
+    private bool isCharging = false;
+    private float chargeTimer = 0f;
 
     private void Awake()
     {
-        input = new PlayerInputActions();
-
-        input.Player.Shoot.started += ctx => StartCharging();
-        input.Player.Shoot.canceled += ctx => ReleaseCharging();
-
         if (frogTongue == null)
         {
             frogTongue = GetComponentInChildren<FrogTongue>();
             if (frogTongue == null)
-            {
                 Debug.LogError("FrogTongue reference not found on this GameObject");
-            }
         }
     }
 
-    private bool CanShoot()
+    private void Update()
     {
-        if (frogTongue == null)
-            return true; 
+        HandleProjectileInput();
+        HandleTongueInput();
 
-        return !frogTongue.extending && !frogTongue.retracting;
-    }
-
-    private void OnEnable()
-    {
-        if (frogTongue != null)
-        {
-            input.Player.Tongue.started += ctx => frogTongue.BeginTongue();
-            input.Player.Tongue.canceled += ctx => frogTongue.EndTongue();
-        }
-
-        input.Enable();
-    }
-
-    private void OnDisable()
-    {
-        input.Disable();
-    }
-
-    void Update()
-    {
         if (isCharging)
         {
             chargeTimer += Time.deltaTime;
@@ -68,20 +40,46 @@ public class AttackScript : MonoBehaviour
         }
     }
 
+    private void HandleProjectileInput()
+    {
+        if (Input.GetButtonDown("Fire1"))
+            StartCharging();
+
+        if (Input.GetButtonUp("Fire1"))
+            ReleaseCharging();
+    }
+
+    private void HandleTongueInput()
+    {
+        if (frogTongue == null) return;
+
+        if (Input.GetButtonDown("Fire2"))
+            frogTongue.BeginTongue();
+
+        if (Input.GetButtonUp("Fire2"))
+            frogTongue.EndTongue();
+    }
+
+    private bool CanShoot()
+    {
+        if (frogTongue == null)
+            return true;
+
+        return !frogTongue.extending && !frogTongue.retracting;
+    }
+
     private void StartCharging()
     {
+        if (!CanShoot()) return;
+
         isCharging = true;
         chargeTimer = minChargeTime;
-
-        if (!CanShoot()) return;
     }
 
     private void ReleaseCharging()
     {
         if (!isCharging) return;
-
         if (!CanShoot()) return;
-
         if (Time.time < lastFireTime + fireCooldown) return;
 
         isCharging = false;
@@ -90,7 +88,7 @@ public class AttackScript : MonoBehaviour
 
         FireProjectile(chargePercent);
 
-        lastFireTime = Time.time; 
+        lastFireTime = Time.time;
     }
 
     private void FireProjectile(float chargePercent)
@@ -99,8 +97,6 @@ public class AttackScript : MonoBehaviour
 
         Projectile projectile = proj.GetComponent<Projectile>();
         if (projectile != null)
-        {
             projectile.Initialize(chargePercent);
-        }
     }
 }

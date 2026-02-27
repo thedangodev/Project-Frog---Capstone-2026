@@ -74,16 +74,22 @@ public class PlayerMovement : MonoBehaviour
             transform.forward = moveInput;
     }
 
+    /// <summary>
+    /// Stops player movement. 
+    /// Intended to be called externally
+    /// </summary>
     public void StopMovement()
     {
-        // Method to be called externally to stop player movment (ex: during attack animation)
         movementStoppedExternally = true;
         moveInput = Vector3.zero;
     }
 
+    /// <summary>
+    /// Resumes player movement.
+    /// Intended to be called externally
+    /// </summary>
     public void ResumeMovement()
     {
-        // Method to be called externally to resume player movement (ex: after the end of a ranged attack animation)
         movementStoppedExternally = false;
     }
 
