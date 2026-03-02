@@ -101,3 +101,4 @@ InitTestScene*.unity*
 
 # Manual Ignores
 ProjectSettings/VisualScriptingSettings.asset
+/Assets/Particle_stuff/
