@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
@@ -102,6 +103,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (!enableNav) return;
         agent.isStopped = false;
     }
+
+    internal void ApplySlow(float slowMultiplier, float slowDuration)
+    {
+        throw new NotImplementedException();
+    }
     #endregion
-   
+
 }
