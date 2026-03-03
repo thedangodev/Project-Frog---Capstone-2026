@@ -98,7 +98,7 @@ public class EnemyBase : MonoBehaviour
         agent.speed = FinleSpeed;
 
         UpdateHitBox();
-        EnforcePlayerDistance();
+        //EnforcePlayerDistance();
         MoveTo(player.position);
 
     }
@@ -233,29 +233,29 @@ public class EnemyBase : MonoBehaviour
         animator.SetBool(attackParamName, false);
         attackTriggered = false; // allow next attack after cooldown
     }
-    private void EnforcePlayerDistance()
-    {
-        if (player == null) return;
+    //private void EnforcePlayerDistance()
+    //{
+    //    if (player == null) return;
 
-        float minDistance = stoppingDistance - negetivepush;
-        Vector3 direction = transform.position - player.position;
-        float currentDistance = direction.magnitude;
+    //    float minDistance = stoppingDistance - negetivepush;
+    //    Vector3 direction = transform.position - player.position;
+    //    float currentDistance = direction.magnitude;
 
-        // If enemy is too close to player
-        if (currentDistance < minDistance)
-        {
-            Vector3 pushDir = direction.normalized;
+    //    // If enemy is too close to player
+    //    if (currentDistance < minDistance)
+    //    {
+    //        Vector3 pushDir = direction.normalized;
 
-            // If exactly same position (rare but safe check)
-            if (pushDir == Vector3.zero)
-                pushDir = -player.forward;
+    //        // If exactly same position (rare but safe check)
+    //        if (pushDir == Vector3.zero)
+    //            pushDir = -player.forward;
 
-            Vector3 targetPosition = player.position + pushDir * minDistance;
+    //        Vector3 targetPosition = player.position + pushDir * minDistance;
 
-            // Move enemy to safe position
-            agent.Warp(targetPosition);
-        }
-    }
+    //        // Move enemy to safe position
+    //        agent.Warp(targetPosition);
+    //    }
+    //}
 
 
 
