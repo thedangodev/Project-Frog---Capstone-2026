@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 moveInput;
     private Vector3 dashDirection;
+    private Vector3 lookDirection;
 
     private bool isDashing;
     private bool movementStoppedExternally;
@@ -53,8 +54,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (movementStoppedExternally)
+        if (movementStoppedExternally) { 
+            transform.forward = lookDirection;
             return;
+        }
 
         // Dash movement
         if (isDashing)
@@ -71,17 +74,21 @@ public class PlayerMovement : MonoBehaviour
 
         // Rotate player to the move direction
         if (moveInput.sqrMagnitude > 0.0001f)
+        {
             transform.forward = moveInput;
+        }
     }
 
     /// <summary>
     /// Stops player movement. 
     /// Intended to be called externally
     /// </summary>
-    public void StopMovement()
+    public void StopMovement(Vector3? forward = null)
     {
         movementStoppedExternally = true;
         moveInput = Vector3.zero;
+
+        if (forward != null) { lookDirection = forward.Value; }
     }
 
     /// <summary>

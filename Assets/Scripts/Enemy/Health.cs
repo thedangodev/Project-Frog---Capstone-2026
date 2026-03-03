@@ -4,14 +4,12 @@ public class Health : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
-    private Healthbar healthbar;
+    [SerializeField] private Healthbar healthbar;
 
     public bool IsDead { get; private set; }
 
     private void Awake()
     {
-        healthbar = GetComponentInChildren<Healthbar>();
-
         if (healthbar != null)
         {
             Debug.LogError(
@@ -39,6 +37,16 @@ public class Health : MonoBehaviour
         {
             Die();
         }
+    }
+    public void Heal(float amount)
+    {
+        Debug.Log("heal");
+        if (IsDead) return;
+
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+
+        healthbar.UpdateHealthBar(maxHealth, currentHealth);
     }
 
     private void Die()

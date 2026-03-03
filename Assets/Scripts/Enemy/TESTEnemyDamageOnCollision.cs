@@ -8,12 +8,13 @@ public class TESTEnemyDamageOnCollision : MonoBehaviour
     [SerializeField] private float knockbackDistance = 5f;
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Enemy triggered with: " + other.name);
+        if (other.tag != "Player") { return; }
         TryDamage(other);
     }
 
     private void OnTriggerStay(Collider other)
     {
+        if (other.tag != "Player") { return; }
         TryDamage(other);
     }
 
