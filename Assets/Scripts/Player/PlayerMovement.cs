@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashDistance = 5f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
+    [SerializeField] private TrailRenderer dashTrail;
 
     private Rigidbody rb;
 
@@ -30,6 +31,9 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        if (dashTrail != null)
+            dashTrail.emitting = false;
     }
 
     private void Update()
@@ -105,13 +109,21 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         dashTimer = dashDuration;
 
+        if (dashTrail != null)
+            dashTrail.emitting = true;
+
         // Set the dash direction to the move direction. If there is no move direction, set the dash direction to the direction the player is facing
         dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
+
+
     }
 
     private void EndDash()
     {
         isDashing = false;
         dashCooldownTimer = dashCooldown;
+
+        if (dashTrail != null)
+            dashTrail.emitting = false;
     }
 }
