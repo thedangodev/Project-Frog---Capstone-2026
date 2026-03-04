@@ -1,4 +1,8 @@
-Project Frog Unity game / TFS capstone Project.
-Unity Version 6.2 (6000.2.6f2)
-Feel free to clone the repo to your local system.
-Ensure to create a branch to work on before creating new scripts & request before merging branch to main.
+Project: Frog
+
+Capstone 2026
+
+Unity Version 6.3 (6000.3.9f1)
+
+Always pull the latest changes from the main branch before creating a new branch.
+After your work is done on your new branch, create a pull request to merge back into main.

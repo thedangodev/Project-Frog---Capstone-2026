@@ -15,13 +15,13 @@ public class PlayerImmortality : MonoBehaviour
     private Renderer[] renderers;
     private Material[][] originalMaterials;   // ← stores original mats
 
-    private TopDownControllerWithDash controller;
+    private PlayerMovement controller;
     private bool isGlowing = false;
 
     private void Awake()
     {
         renderers = GetComponentsInChildren<Renderer>();
-        controller = GetComponent<TopDownControllerWithDash>();
+        controller = GetComponent<PlayerMovement>();
 
         // Save original materials
         originalMaterials = new Material[renderers.Length][];
@@ -35,7 +35,7 @@ public class PlayerImmortality : MonoBehaviour
     {
         if (controller == null) return;
 
-        isImmortal = controller.IsImmortal;
+        isImmortal = controller.IsDashing;
 
         if (isImmortal && !isGlowing)
             EnableGlow();
