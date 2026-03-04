@@ -29,6 +29,8 @@ public class PlayerMovement : MonoBehaviour
 
     private float currentMaxRadius; // The distance to the tower at this moment
     private Vector3 towerPosition;
+    private float currentMinRadius = 3f;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -118,15 +120,24 @@ public class PlayerMovement : MonoBehaviour
         // Prevent moving farther than currentMaxRadius
         if (distance > currentMaxRadius)
         {
-            // Slide along tangent for smooth motion
             Vector3 toCenter = offset.normalized;
             Vector3 tangentMove = moveVector - Vector3.Dot(moveVector, toCenter) * toCenter;
 
-            // Optional: also slow down movement slightly as you approach the wall
             float overshoot = distance - currentMaxRadius;
             tangentMove *= Mathf.Clamp01(1f - overshoot / moveVector.magnitude);
 
             return tangentMove;
+        }
+
+        // 🔥 ADD THIS (inner wall)
+        if (distance < currentMinRadius)
+        {
+            Vector3 toCenter = offset.normalized;
+
+            // Snap player exactly to min radius
+            Vector3 clampedPos = towerPosition + toCenter * currentMinRadius;
+
+            return clampedPos - currentPos;
         }
 
         return moveVector;
