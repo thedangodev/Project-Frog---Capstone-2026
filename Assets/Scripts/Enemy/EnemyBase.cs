@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -6,35 +7,41 @@ using UnityEngine.AI;
 using UnityEngine.InputSystem.Processors;
 
 // Enemy BaseClass
-public abstract class EnemyBase : MonoBehaviour, IDamageable
+public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
 {
     [Header("References")]
     [SerializeField] protected Transform player;
 
     protected bool enableNav = true;
     protected NavMeshAgent agent;
-
     protected bool canAttack = true;
 
     [Header("References")]
     [SerializeField] protected GameObject attackHitbox;
     [SerializeField] private protected Health health;
-    
+
+
+    [Header("Stats")]
+    [SerializeField] protected float baseMoveSpeed = 5f;
 
     
     private bool isActive;
     private Rigidbody rb;
 
+    private Dictionary<object, float> speedModifiers = new Dictionary<object, float>();
+
+    
     public void Activate(Transform playerTransform)
     {
         player = playerTransform;
         isActive = true;
-        rb.isKinematic = false;
+        rb.isKinematic = true;
     }
     protected virtual void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
+        RecalculateSpeed();
         
         // Initialize health component
         if (health == null)
@@ -102,6 +109,37 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (!enableNav) return;
         agent.isStopped = false;
     }
+    private void RecalculateSpeed()
+    {
+        float finalMult = 1f;
+
+        foreach (var mult in speedModifiers.Values)
+        {
+            finalMult *= mult;
+        }
+
+        agent.speed = baseMoveSpeed * finalMult;
+    }
+
+
+    public void AddSpeedModifier(object source, float multiplier)
+    {
+        if (!speedModifiers.ContainsKey(source))
+        {
+            speedModifiers.Add(source, multiplier);
+            RecalculateSpeed();
+        }
+    }
+
+
+    public void RemoveSpeedModifier(object source)
+    {
+        if (speedModifiers.ContainsKey(source))
+        {
+            speedModifiers.Remove(source);
+            RecalculateSpeed();
+        }
+    }
     #endregion
-   
+
 }

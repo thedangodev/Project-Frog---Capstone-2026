@@ -1,10 +1,26 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, IMovement
 {
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private float baseMoveSpeed = 10f;
+
+    private float CurrentSpeed
+    {
+        get
+        {
+            float finalMult = 1f;
+
+            foreach (var mult in speedModifiers.Values)
+                finalMult *= mult;   
+
+            return baseMoveSpeed * finalMult;
+        }
+    }
+
+    private Dictionary<object,float> speedModifiers = new Dictionary<object, float>();
 
     [Header("Dash")]
     [SerializeField] private float dashDistance = 5f;
@@ -69,8 +85,9 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+     
         // If no dash, move normally
-        rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + moveInput * CurrentSpeed* Time.fixedDeltaTime);
 
         // Rotate player to the move direction
         if (moveInput.sqrMagnitude > 0.0001f)
@@ -114,4 +131,20 @@ public class PlayerMovement : MonoBehaviour
         isDashing = false;
         dashCooldownTimer = dashCooldown;
     }
+
+
+
+    public void AddSpeedModifier(object source, float multiplier)
+    {
+        if (!speedModifiers.ContainsKey(source))
+            speedModifiers.Add(source, multiplier);
+    }
+
+    public void RemoveSpeedModifier(object source)
+    {
+        if (speedModifiers.ContainsKey(source))
+            speedModifiers.Remove(source);
+    }
+
+  
 }
