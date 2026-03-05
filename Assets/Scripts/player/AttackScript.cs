@@ -3,11 +3,11 @@ using UnityEngine;
 public class AttackScript : MonoBehaviour
 {
     [Header("Charge Settings")]
-    [SerializeField] private float maxChargeTime = 2f; // adjust as nessisary to get the feel of charging right.
+    [SerializeField] private float maxChargeTime = 2f;
     [SerializeField] private float minChargeTime = 0f;
 
     [Header("Projectile")]
-    [SerializeField] private GameObject projectilePrefab; //WILL CHANGE, gonna change this to support different projectiles for each Anchor to help with buff usage. Later in code I'll determine which Anchor is being used and switch which is the used projectile.
+    [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform firePoint;
     [SerializeField] private float fireCooldown = 0.5f;
     private float lastFireTime = -999f;
@@ -15,13 +15,13 @@ public class AttackScript : MonoBehaviour
     private float chargeTimer;
     private bool isCharging;
 
-    [SerializeField] private FrogTongue frogTongue;
+    [SerializeField] private PlayerTongueAttack frogTongue;
 
     private void Awake()
     {
         if (frogTongue == null)
         {
-            frogTongue = GetComponentInChildren<FrogTongue>();
+            frogTongue = GetComponentInChildren<PlayerTongueAttack>();
             if (frogTongue == null)
             {
                 Debug.LogError("FrogTongue reference not found on this GameObject");

@@ -1,102 +1,69 @@
+//Attach to a empty game object that is attached to the player. Position this game object where the tongue should extend from. Name it TongueRoot for some clarity.
 using UnityEngine;
 
 public class PlayerTongueAttack : MonoBehaviour
 {
-    [SerializeField] private Transform tongueMesh;
-
-    [Header("Tongue gameplay variables")]
-    [SerializeField] private float extendSpeed = 10f;
-    [SerializeField] private float maxExtendTime = 0.5f;
-    [SerializeField] private float retractionTimeReductionFactor = 2f;
-
-    [Header("Tongue Visual")]
+    [SerializeField] private Transform tongueMesh; //Have Tongue mesh be a child of TongueRoot.
+    [SerializeField] private float maxLength = 10f;
+    [SerializeField] private float extendSpeed = 20f;
+    [SerializeField] private float retractSpeed = 25f;
     [SerializeField] private float tongueWidth = 0.3f;
-    [SerializeField] private float tongueHeight = 1.4f;
-     
+
     private float currentLength = 0f;
-    private float extendTimer = 0f;
-    private float maxTongueLength = 0f;
-    private float retractDuration = 0f;
+    public bool extending = false; //keep public AttackScript uses this to stop player shooting when using Tongue.
+    public bool retracting = false; //keep public AttackScript uses this to stop player shooting when using Tongue.
 
-    private bool extending = false;
-    private bool retracting = false;
-
-    /// <summary>
-    /// Returns true if tongue is currently extending or retracting
-    /// </summary>
     public bool IsActive => extending || retracting;
 
-    /// <summary>
-    /// Event invoked when tongue finishes retracting
-    /// </summary>
     public System.Action OnTongueFinished;
 
-    /// <summary>
-    /// Starts tongue extension
-    /// </summary>
-    public void StartExtend()
-    {
-        if (IsActive) return;
-
-        extending = true;
-        retracting = false;
-        currentLength = 0f;
-        extendTimer = 0f;
-
-        // Maximum length of tongue determined by extendSpeed and maxExtendTime
-        maxTongueLength = extendSpeed * maxExtendTime;
-    }
-
-    /// <summary>
-    /// Starts tongue retraction
-    /// </summary>
-    public void StartRetract()
+    public void BeginTongue()
     {
         if (retracting) return;
+        extending = true;
+        retracting = false;
+    }
 
-        extending = false;
-        retracting = true;
-
-        retractDuration = extendTimer / retractionTimeReductionFactor;
-
-        if (retractDuration <= 0f) retractDuration = 0.05f; // prevent division by 0 safety fallback
-        extendTimer = 0f;
+    public void EndTongue() //Call this when hitting an enemy or healing bug to instantly begin retracting. 
+    {
+        if (!retracting)
+        {
+            extending = false;
+            retracting = true;
+        }
     }
 
     private void Update()
     {
         if (extending)
         {
-            float delta = extendSpeed * Time.deltaTime;
-            currentLength += delta;
-            extendTimer += Time.deltaTime;
-
-            if (currentLength >= maxTongueLength)
+            currentLength += extendSpeed * Time.deltaTime;
+            if (currentLength >= maxLength)
             {
-                // If tongue at maxTongueLength, stop extending
-                currentLength = maxTongueLength;
+                currentLength = maxLength;
                 extending = false;
+                EndTongue();
             }
-        } else if (retracting)
+        } 
+        else if (retracting)
         {
-            extendTimer += Time.deltaTime;
-            currentLength = Mathf.Lerp(maxTongueLength, 0f, extendTimer / retractDuration);
-
-            if (extendTimer >= retractDuration)
+            currentLength -= retractSpeed * Time.deltaTime;
+            if (currentLength <= 0f)
             {
                 currentLength = 0f;
                 retracting = false;
-                
-                OnTongueFinished?.Invoke(); // notify subscribers
+
+                OnTongueFinished?.Invoke();
             }
         }
 
-        UpdateVisual();
+        UpdateTongueVisual();
     }
 
-    private void UpdateVisual()
+    private void UpdateTongueVisual()
     {
-        tongueMesh.localScale = new Vector3(tongueWidth, tongueWidth, currentLength);
-        tongueMesh.localPosition = new Vector3(0f, tongueHeight, currentLength);
+        tongueMesh.localScale = new Vector3(tongueWidth, currentLength / 2f, tongueWidth);
+        tongueMesh.localPosition = new Vector3(0, 0, currentLength / 2f); //MAKE THIS 0, 0, 0 WHEN FINAL MESH IS ADDED, And make sure the pivot for that mech isn't dead center.
     }
 }
+
