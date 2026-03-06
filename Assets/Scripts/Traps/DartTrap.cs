@@ -8,7 +8,7 @@ using UnityEngine;
 /// When a GameObject tagged "Player" enters the child trigger the trap will start shooting
 /// dart prefabs every `fireInterval` seconds; it stops when all players leave the trigger.
 /// </summary>
-public class TrapShoot : MonoBehaviour
+public class DartTrap: MonoBehaviour
 {
     [Header("Dart")]
     public GameObject dartPrefab;
@@ -39,7 +39,7 @@ public class TrapShoot : MonoBehaviour
 
         if (_trapTriggerChild == null)
         {
-            Debug.LogWarning($"[{nameof(TrapShoot)}] No child with tag \"trap\" found under {name}.");
+            Debug.LogWarning($"[{nameof(DartTrap)}] No child with tag \"trap\" found under {name}.");
             return;
         }
 
@@ -47,11 +47,11 @@ public class TrapShoot : MonoBehaviour
         var col = _trapTriggerChild.GetComponent<Collider>();
         if (col == null)
         {
-            Debug.LogWarning($"[{nameof(TrapShoot)}] Child tagged \"trap\" on {_trapTriggerChild.name} has no Collider.");
+            Debug.LogWarning($"[{nameof(DartTrap)}] Child tagged \"trap\" on {_trapTriggerChild.name} has no Collider.");
         }
         else if (!col.isTrigger)
         {
-            Debug.LogWarning($"[{nameof(TrapShoot)}] Collider on {_trapTriggerChild.name} is not marked as isTrigger. Mark it as trigger for trap activation.");
+            Debug.LogWarning($"[{nameof(DartTrap)}] Collider on {_trapTriggerChild.name} is not marked as isTrigger. Mark it as trigger for trap activation.");
         }
 
         // Add or get forwarding component so the child's trigger events are forwarded here
@@ -119,13 +119,13 @@ public class TrapShoot : MonoBehaviour
     {
         if (dartPrefab == null)
         {
-            Debug.LogWarning($"[{nameof(TrapShoot)}] No dartPrefab assigned on {name}.");
+            Debug.LogWarning($"[{nameof(DartTrap)}] No dartPrefab assigned on {name}.");
             return;
         }
 
         if (shootPoint == null)
         {
-            Debug.LogWarning($"[{nameof(TrapShoot)}] No shootPoint assigned on {name}.");
+            Debug.LogWarning($"[{nameof(DartTrap)}] No shootPoint assigned on {name}.");
             return;
         }
 
@@ -151,7 +151,7 @@ public class TrapShoot : MonoBehaviour
 /// </summary>
 public class TrapTriggerForwarder : MonoBehaviour
 {
-    [HideInInspector] public TrapShoot parent;
+    [HideInInspector] public DartTrap parent;
 
     void OnTriggerEnter(Collider other)
     {

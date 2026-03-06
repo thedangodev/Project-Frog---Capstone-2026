@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 5835577309466222896}
   - component: {fileID: 3009763174011981018}
   - component: {fileID: 4346447341780550031}
-  - component: {fileID: 4509094460247470353}
   - component: {fileID: 5236938682946006623}
   - component: {fileID: 8197622151103158488}
   - component: {fileID: 4275648167820347246}
@@ -96,6 +95,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!136 &3009763174011981018
 CapsuleCollider:
@@ -147,34 +147,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 1
---- !u!114 &4509094460247470353
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7555014404437206304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 114454af98abb4845acb8b406c9a1a22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TopDownControllerWithDash
-  health: {fileID: 0}
-  moveSpeed: 10
-  gravity: 9.81
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  groundCheckDistance: 0.2
-  groundSnapOffset: 0.01
-  enemyCollisionSkin: 0.3
-  dashInputName: Dash
-  dashMultiplier: 2
-  dashDuration: 1
-  dashCooldown: 2
-  rb: {fileID: 4346447341780550031}
-  col: {fileID: 3009763174011981018}
-  IsImmortal: 0
 --- !u!114 &5236938682946006623
 MonoBehaviour:
   m_ObjectHideFlags: 0

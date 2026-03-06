@@ -7,18 +7,6 @@ using UnityEngine.UI;
 
 public class Crosshair : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        // Intentionally left for compatibility with existing lifecycle comments.
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        // Intentionally left for compatibility with existing lifecycle comments.
-    }
-
     [Header("Crosshair Settings")]
     [Tooltip("Optional sprite to use for the crosshair. If null, a temporary crosshair will be generated.")]
     public Sprite crosshairSprite;
@@ -35,7 +23,22 @@ public class Crosshair : MonoBehaviour
 
     void Awake()
     {
+        // Ensure cursor is not locked by other systems
+        Cursor.lockState = CursorLockMode.None;
+
         SetupCanvasAndCrosshair();
+    }
+
+    void OnEnable()
+    {
+        // Apply visibility according to setting when this script becomes active
+        Cursor.visible = !hideSystemCursor;
+    }
+
+    void OnDisable()
+    {
+        // Restore cursor visibility when disabled (avoid leaving cursor hidden in editor)
+        Cursor.visible = true;
     }
 
     void LateUpdate()
@@ -47,8 +50,9 @@ public class Crosshair : MonoBehaviour
             crosshairRect.position = mousePos;
         }
 
-        if (hideSystemCursor)
-            Cursor.visible = false;
+        // Defensive: keep cursor unlocked while the game runs (in case other code sets it)
+        if (Cursor.lockState != CursorLockMode.None)
+            Cursor.lockState = CursorLockMode.None;
     }
 
     void SetupCanvasAndCrosshair()
