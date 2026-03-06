@@ -24,5 +24,7 @@ public class Projectile : MonoBehaviour
     {
         transform.position += transform.forward * speed * Time.deltaTime;
     }
+
+    //ADD DAMAGE FUNCTION HERE
 }
 
