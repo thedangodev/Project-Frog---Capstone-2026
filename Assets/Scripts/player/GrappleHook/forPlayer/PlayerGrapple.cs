@@ -1,0 +1,386 @@
+﻿using UnityEngine;
+
+public class PlayerGrapple : MonoBehaviour
+{
+    [Header("Input")]
+    [SerializeField] private string grappleButton = "Fire3";
+
+    [Header("Preview")]
+    [SerializeField] private GameObject hookPreview;
+    [SerializeField] private float previewSize = 1f;
+    [SerializeField] private Transform firePoint;
+
+    private GrappleTower[] allTowers;
+    private GrappleTower currentTower;
+
+    [SerializeField] private bool isGrappling;
+    public bool IsGrappling => isGrappling;
+    public GrappleTower CurrentTower => currentTower;
+
+    private void Awake()
+    {
+        allTowers = FindObjectsOfType<GrappleTower>();
+    }
+
+    private void Update()
+    {
+        UpdateCurrentTower();
+        HandleInput();
+        ValidateGrapple();
+        HandlePreview();
+    }
+
+    private void UpdateCurrentTower()
+    {
+        currentTower = GetClosestTowerInRange();
+    }
+
+    private void HandleInput()
+    {
+        if (Input.GetButtonDown(grappleButton))
+        {
+            // Press button → toggle grapple
+            if (isGrappling)
+                ReleaseGrapple();
+            else
+                StartGrapple();
+        }
+    }
+
+    private void ValidateGrapple()
+    {
+        if (isGrappling && currentTower == null)
+        {
+            ReleaseGrapple();
+        }
+    }
+
+    private GrappleTower GetClosestTowerInRange()
+    {
+        GrappleTower closest = null;
+        float minDist = float.MaxValue;
+
+        foreach (GrappleTower tower in allTowers)
+        {
+            float distance = Vector3.Distance(transform.position, tower.transform.position);
+
+            if (distance <= tower.GrappleRange && distance < minDist)
+            {
+                minDist = distance;
+                closest = tower;
+            }
+        }
+
+        return closest;
+    }
+
+    private void HandlePreview()
+    {
+        if (hookPreview == null) return;
+
+        GrappleTower previewTower = currentTower;
+
+        if (previewTower != null)
+        {
+            hookPreview.SetActive(true);
+
+            Collider col = previewTower.GetComponent<Collider>();
+            if (col != null)
+                hookPreview.transform.position = col.ClosestPoint(transform.position);
+            else
+                hookPreview.transform.position = previewTower.transform.position;
+
+            hookPreview.transform.localScale = Vector3.one * previewSize;
+        }
+        else
+        {
+            hookPreview.SetActive(false);
+
+            if (firePoint != null)
+                hookPreview.transform.position = firePoint.position;
+        }
+    }
+
+    /// <summary>
+    /// Start grappling if there is a tower in range
+    /// </summary>
+    public void StartGrapple()
+    {
+        if (currentTower != null)
+            isGrappling = true;
+    }
+
+    /// <summary>
+    /// Release grappling
+    /// </summary>
+    public void ReleaseGrapple()
+    {
+        isGrappling = false;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+//    [Header("Grapple Settings")]
+//    public float grappleRange = 30f;
+//    public LayerMask grappleLayer;
+//    public Transform firePoint;
+
+//    [Header("Visuals")]
+//    public LineRenderer rope;
+//    public Transform HookPreview;
+//    public GameObject hookPreview;
+//    public float previewSize = 0.3f;
+
+//    CharacterController controller;
+//    Camera cam;
+
+//    bool isGrappling;
+//    public bool IsGrappling => isGrappling;
+//    Vector3 grapplePoint;
+//    float chainLength;
+//    public GrappleTower currentTower;
+//    public Vector3 GetGrapplePoint()
+//    {
+//        return grapplePoint;
+//    }
+
+//    void Start()
+//    {
+//        controller = GetComponent<CharacterController>();
+//        cam = Camera.main;
+
+//        rope.positionCount = 2;
+//        rope.enabled = false;
+//        hookPreview.SetActive(true);
+//    }
+
+//    void Update()
+//    {
+//        HandlePreview();
+//        HandleInput();
+
+//        if (isGrappling)
+//        {
+//            ConstrainMovement();
+//            UpdateRope();
+//        }
+//    }
+
+//    void HandleInput()
+//    {
+//        // Use old input system "Fire3" instead of mouse or controller-specific calls.
+//        if (Input.GetButtonDown("Fire3"))
+//        {
+//            if (!isGrappling)
+//                TryGrapple();
+//            else
+//                ReleaseGrapple();
+//        }
+//    }
+
+//    void TryGrapple()
+//    {
+//        // Stop aiming with the mouse. Instead pick the closest GameObject with tag "tower"
+//        // within grappleRange and on the configured layer(s).
+//        Collider[] colliders = Physics.OverlapSphere(transform.position, grappleRange, grappleLayer);
+//        Collider closest = null;
+//        float minDist = float.MaxValue;
+
+//        foreach (var c in colliders)
+//        {
+//            if (!c.CompareTag("tower")) continue;
+
+//            float d = Vector3.SqrMagnitude(c.transform.position - transform.position);
+//            if (d < minDist)
+//            {
+//                minDist = d;
+//                closest = c;
+//            }
+//        }
+//        if (isGrappling) return; // extra safety
+//        if (closest == null) return;
+
+//        // Prefer GrappleTower on the collider or its parent
+//        GrappleTower tower = closest.GetComponent<GrappleTower>() ?? closest.GetComponentInParent<GrappleTower>();
+//        if (!tower) return;
+
+//        isGrappling = true;
+//        // Use the closest point on the collider so the grapple point is accurate for complex colliders
+//        grapplePoint = closest.ClosestPoint(transform.position);
+//        chainLength = Vector3.Distance(transform.position, grapplePoint);
+//        currentTower = tower;
+
+//        rope.enabled = true;
+//        //ApplyTowerEffects(tower);
+//    }
+
+//    public void ReleaseGrapple()
+//    {
+//        isGrappling = false;
+//        rope.enabled = false;
+//        currentTower = null;
+
+//        //RemoveTowerEffects();
+//    }
+
+//    void ConstrainMovement()
+//    {
+//        Vector3 dir = transform.position - grapplePoint;
+//        float dist = dir.magnitude;
+
+//        if (dist > chainLength)
+//        {
+//            Vector3 constrainedPos = grapplePoint + dir.normalized * chainLength;
+//            transform.position = constrainedPos;
+//        }
+//    }
+
+//    void UpdateRope()
+//    {
+//        rope.SetPosition(0, firePoint.position);
+//        rope.SetPosition(1, HookPreview.position);
+//    }
+
+//    void HandlePreview()
+//    {
+//        Collider targetCollider = null;
+
+//        // 🔒 If grappling → use current tower ONLY
+//        if (isGrappling && currentTower != null)
+//        {
+//            targetCollider = currentTower.GetComponent<Collider>();
+//        }
+//        else
+//        {
+//            // 🔍 Only search when NOT grappling
+//            Collider[] colliders = Physics.OverlapSphere(transform.position, grappleRange, grappleLayer);
+//            float minDist = float.MaxValue;
+
+//            foreach (var c in colliders)
+//            {
+//                if (!c.CompareTag("tower")) continue;
+
+//                float d = Vector3.SqrMagnitude(c.transform.position - transform.position);
+//                if (d < minDist)
+//                {
+//                    minDist = d;
+//                    targetCollider = c;
+//                }
+//            }
+//        }
+
+//        // Apply preview to whichever collider we selected
+//        if (targetCollider != null)
+//        {
+//            hookPreview.SetActive(true);
+//            hookPreview.transform.position =
+//                targetCollider.ClosestPoint(transform.position);
+
+//            hookPreview.transform.localScale = Vector3.one * previewSize;
+//        }
+//        else
+//        {
+//            if (firePoint != null)
+//                hookPreview.transform.position = firePoint.position;
+
+//            hookPreview.SetActive(false);
+//        }
+//    }
+
+//    //#region Tower Effects
+
+//    //void ApplyTowerEffects(GrappleTower tower)
+//    //{
+//    //    switch (tower.towerType)
+//    //    {
+//    //        case TowerType.Explosive:
+//    //            InvokeRepeating(nameof(ExplosivePulse), 1f, 1f);
+//    //            break;
+
+//    //        case TowerType.SlowAndDamageBoost:
+//    //            PlayerStats.Instance.damageMultiplier = tower.playerDamageMultiplier;
+//    //            break;
+
+//    //        case TowerType.ExtraProjectiles:
+//    //            PlayerStats.Instance.extraProjectiles += tower.extraProjectiles;
+//    //            break;
+//    //    }
+//    //}
+
+//    //void RemoveTowerEffects()
+//    //{
+//    //    CancelInvoke(nameof(ExplosivePulse));
+//    //    PlayerStats.Instance.ResetStats();
+//    //}
+
+//    //void ExplosivePulse()
+//    //{
+//    //    Collider[] hits = Physics.OverlapSphere(grapplePoint, currentTower.explosionRadius);
+
+//    //    foreach (var hit in hits)
+//    //    {
+//    //        // Use the new EnemyBase type. EnemyBase implements IDamageable, so cast to IDamageable
+//    //        // to apply damage. For knockback, use the enemy's Rigidbody if present.
+//    //        if (hit.TryGetComponent<EnemyBase>(out var enemy))
+//    //        {
+//    //            // Apply damage via IDamageable (EnemyBase implements it explicitly)
+//    //            if (enemy is IDamageable dmgable)
+//    //            {
+//    //                dmgable.TakeDmg(currentTower.dotDamage);
+//    //            }
+//    //            else
+//    //            {
+//    //                // Fallback: try EnemyHealth component if present
+//    //                var enemyHealth = enemy.GetComponent<EnemyHealth>();
+//    //                if (enemyHealth != null)
+//    //                    enemyHealth.TakeDamage(currentTower.dotDamage);
+//    //            }
+
+//    //            // Apply knockback using Rigidbody (if available)
+//    //            var rb = enemy.GetComponent<Rigidbody>();
+//    //            if (rb != null)
+//    //            {
+//    //                Vector3 forceDir = (hit.transform.position - grapplePoint).normalized;
+//    //                float knockbackStrength = 5f; // tuned value; adjust as needed
+//    //                rb.AddForce(forceDir * knockbackStrength, ForceMode.Impulse);
+//    //            }
+//    //        }
+//    //    }
+//    //}
+
+//    //#endregion
+
+//    // Draw grapple radius gizmo in the editor when this object is selected.
+//    void OnDrawGizmosSelected()
+//    {
+//        // translucent fill
+//        Gizmos.color = new Color(0f, 0.6f, 1f, 0.08f);
+//        Gizmos.DrawSphere(transform.position, grappleRange);
+
+//        // clear wire
+//        Gizmos.color = new Color(0f, 0.9f, 1f, 1f);
+//        Gizmos.DrawWireSphere(transform.position, grappleRange);
+//    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
