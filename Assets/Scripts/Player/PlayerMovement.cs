@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(TrailRenderer))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
@@ -10,8 +11,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashDistance = 5f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
-    [SerializeField] private TrailRenderer dashTrail;
 
+    // References on player prefab
+    private TrailRenderer dashTrail;
     private Rigidbody rb;
 
     private Vector3 moveInput;
@@ -28,12 +30,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        // Grab rigibody reference and set the settings
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        if (dashTrail != null)
-            dashTrail.emitting = false;
+        // Grab trail reference
+        dashTrail = GetComponent<TrailRenderer>();
     }
 
     private void Update()
