@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(TrailRenderer))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
@@ -11,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 0.5f;
 
+    // References on player prefab
+    private TrailRenderer dashTrail;
     private Rigidbody rb;
 
     private Vector3 moveInput;
@@ -27,9 +30,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        // Grab rigibody reference and set the settings
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        // Grab trail reference
+        dashTrail = GetComponent<TrailRenderer>();
     }
 
     private void Update()
@@ -105,13 +112,21 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         dashTimer = dashDuration;
 
+        if (dashTrail != null)
+            dashTrail.emitting = true;
+
         // Set the dash direction to the move direction. If there is no move direction, set the dash direction to the direction the player is facing
         dashDirection = moveInput.sqrMagnitude > 0.01f ? moveInput : transform.forward;
+
+
     }
 
     private void EndDash()
     {
         isDashing = false;
         dashCooldownTimer = dashCooldown;
+
+        if (dashTrail != null)
+            dashTrail.emitting = false;
     }
 }
