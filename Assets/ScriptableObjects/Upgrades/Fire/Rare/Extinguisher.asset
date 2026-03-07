@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7f785317b9e50e4185b34f92f1484fd, type: 3}
+  m_Name: Extinguisher
+  m_EditorClassIdentifier: Assembly-CSharp::CardData
+  cardName: Extinguisher
+  descriptionTemplate: Deals 30 damage to burning enemies and removes the fire effect.
+  element: 0
+  rarity: 1
+  stat: 0
+  levelValues:
+  - 0
+  - 1
+  unlockAbility: 1
+  icon: {fileID: 21300000, guid: e53bea211d0d86244b1034c809df090a, type: 3}

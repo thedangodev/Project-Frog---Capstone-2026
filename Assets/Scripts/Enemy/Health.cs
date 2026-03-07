@@ -4,13 +4,15 @@ public class Health : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
-    [SerializeField] private Healthbar healthbar;
+    private Healthbar healthbar;
 
     public bool IsDead { get; private set; }
 
     private void Awake()
     {
-        if (healthbar != null)
+        healthbar = GetComponentInChildren<Healthbar>();
+
+        if (healthbar == null)
         {
             Debug.LogError(
                 $"Health on {gameObject.name} requires a child HealthBar.", this);
