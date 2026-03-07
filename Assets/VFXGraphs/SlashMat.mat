@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-1504299434417627360
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
+  version: 10
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SlashMat
+  m_Shader: {fileID: -6465566751694194690, guid: ea1df321aa7284ae5b4b0204d5068ea7, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _ALPHATEST_ON
+  - _SURFACE_TYPE_TRANSPARENT
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap:
+    RenderType: Transparent
+  disabledShaderPasses:
+  - SHADOWCASTER
+  - MOTIONVECTORS
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AlphaClip: 1
+    - _AlphaToMask: 0
+    - _Blend: 0
+    - _CastShadows: 0
+    - _CoreHeight: 0.93
+    - _CoreSize: 0.5
+    - _CoreWidth: 0.32
+    - _Cull: 0
+    - _Distortion: 1
+    - _DstBlend: 10
+    - _DstBlendAlpha: 10
+    - _Height: 1.03
+    - _MaskSize: 1
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _Roundness: 7.53
+    - _Scroll: 0.15
+    - _SrcBlend: 5
+    - _SrcBlendAlpha: 1
+    - _StartColorLerp: 0
+    - _Surface: 1
+    - _UV_Color_LERP_Z: 1
+    - _UV_Scroll_W: 1
+    - _Width: 0.31
+    - _ZTest: 4
+    - _ZWrite: 1
+    - _ZWriteControl: 1
+    - _distortionScale: 25
+    - _outerHeight: 0.68
+    - _outerWidth: 0.97
+    m_Colors:
+    - _CoreColor: {r: 14.911404, g: 0.070336975, b: 6.4831448, a: 0}
+    - _DistortionTiling: {r: 8.16, g: 1.44, b: 0, a: 0}
+    - _Distortion_Speed: {r: -1, g: -2, b: 0, a: 0}
+    - _OuterColor: {r: 0.016451327, g: 0, b: 0.01886791, a: 0}
+    - _StartColor: {r: 1, g: 1, b: 1, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
