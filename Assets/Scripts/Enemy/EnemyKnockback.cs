@@ -92,7 +92,26 @@ public class EnemyKnockback : MonoBehaviour
             direction = transform.position - other.transform.position;
         }
 
+        direction = ConstrainForwardAxis(direction);
+
         ApplyKnockback(direction, projectileKnockbackDistance);
+    }
+
+    private Vector3 ConstrainForwardAxis(Vector3 rawDirection)
+    {
+        rawDirection.y = 0f;
+
+        if (rawDirection.sqrMagnitude < 0.000001f)
+            return rawDirection;
+
+        Vector3 forward = transform.forward;
+        forward.y = 0f;
+        forward.Normalize();
+
+        float dot = Vector3.Dot(rawDirection.normalized, forward);
+
+        // preserve magnitude - Locks direction to forward or backwards knockback
+        return forward * Mathf.Sign(dot) * rawDirection.magnitude;
     }
 
     public void ApplyKnockback(Vector3 direction, float distance)

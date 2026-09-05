@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class RockGolemAttack : EnemyAttack
@@ -5,6 +6,19 @@ public class RockGolemAttack : EnemyAttack
     [Header("Projectile")]
     [SerializeField] private GameObject burrowProjectilePrefab;
     [SerializeField] private EnemyBurrowAttackDataSO attackData;
+
+    private Vector3 pendingTargetPosition;
+    private Transform player;
+
+    private Animator animator;
+    private static readonly int AttackingHash = Animator.StringToHash("Attack");
+
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+        GameObject playerObject = GameObject.FindWithTag("Player");
+        player = playerObject.transform;
+    }
 
     protected override void OnExecuteAttack(Vector3 targetPosition)
     {
@@ -19,7 +33,29 @@ public class RockGolemAttack : EnemyAttack
             return;
         }
 
+        pendingTargetPosition = targetPosition;
+        IsAttacking = true;
+        animator.SetTrigger(AttackingHash);
+    }
+
+    private Vector3 GetGroundPosition(Vector3 rawPos)
+    {
+        Vector3 rayStart = rawPos + Vector3.up * 10f;
+        if (attackData != null && attackData.groundLayer != 0 &&
+            Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, 20f, attackData.groundLayer))
+        {
+            return hit.point;
+        }
+        return rawPos;
+    }
+
+    public void AnimEvent_Attack()
+    {
+        if (burrowProjectilePrefab == null || attackData == null) return;
+
         Vector3 origin = GetGroundPosition(transform.position);
+
+        Vector3 targetPosition = player != null ? player.position : pendingTargetPosition;
 
         GameObject go = Instantiate(burrowProjectilePrefab, origin, Quaternion.identity);
 
@@ -34,14 +70,8 @@ public class RockGolemAttack : EnemyAttack
         projectile.Initialize(origin, targetPosition, attackData);
     }
 
-    private Vector3 GetGroundPosition(Vector3 rawPos)
+    public void AnimEvent_AttackEnd()
     {
-        Vector3 rayStart = rawPos + Vector3.up * 10f;
-        if (attackData != null && attackData.groundLayer != 0 &&
-            Physics.Raycast(rayStart, Vector3.down, out RaycastHit hit, 20f, attackData.groundLayer))
-        {
-            return hit.point;
-        }
-        return rawPos;
+        IsAttacking = false;
     }
 }

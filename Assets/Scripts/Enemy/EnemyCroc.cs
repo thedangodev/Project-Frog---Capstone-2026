@@ -36,6 +36,7 @@ public class EnemyCroc : EnemyBase
 
     [Header("FMod Events")]
     [SerializeField] private EventReference spearThrowEvent;
+    [SerializeField] private EventReference spearThrowNarratedEvent;
 
     [Header("Animation")]
     [Tooltip("Animator driving the Croc. Animation Events must be authored on clips this Animator plays.")]
@@ -245,6 +246,7 @@ public class EnemyCroc : EnemyBase
         {
             attackSO.Attack(player, transform);
             RuntimeManager.PlayOneShot(spearThrowEvent, transform.position);
+            RuntimeManager.PlayOneShot(spearThrowNarratedEvent, transform.position);
         }
 
         SetHeldSpearVisible(false);

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{0bf6b5e0-158a-47ca-9b7e-f7a0c74b9343}">
+		<property name="assetPath">
+			<value>Rock Golem - Evan-009.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>8</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f56cd26f-5cc2-4382-8977-db9b212216e0}</destination>
+		</relationship>
+	</object>
+</objects>

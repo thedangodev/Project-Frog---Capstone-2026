@@ -76,6 +76,7 @@ public class OverchargeTrailCollider : MonoBehaviour
     public void EnableCollider()
     {
         isEnabled = true;
+        trailRenderer.Clear();
     }
 
     public void DisableCollider()

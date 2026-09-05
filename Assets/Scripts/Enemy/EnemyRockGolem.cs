@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using FMODUnity;
 
 public class EnemyRockGolem : EnemyBase
 {
@@ -14,10 +15,17 @@ public class EnemyRockGolem : EnemyBase
     [Tooltip("Height above player position used as ray target for LOS checks.")]
     [SerializeField] private float targetEyeHeight = 1.0f;
 
+    [Header("FMod Events")]
+    [SerializeField] private EventReference golemAttackEvent;
+    [SerializeField] private EventReference voicedGolemAttackEvent;
+
+    private Animator animator;
+
     protected override void Awake()
     {
         base.Awake();
         enemyAttack = GetComponent<EnemyAttack>();
+        animator = GetComponent<Animator>();
     }
 
     protected override void Update()
@@ -70,6 +78,24 @@ public class EnemyRockGolem : EnemyBase
         {
             //Debug.Log("[Golem] Calling TriggerAttack");
             enemyAttack.TriggerAttack(player.position);
+
+            RuntimeManager.PlayOneShot(golemAttackEvent, transform.position);
+            RuntimeManager.PlayOneShot(voicedGolemAttackEvent, transform.position);
+        }
+    }
+
+    public override void PlayHitReaction(HitReaction reaction)
+    {
+        if (animator == null) return;
+
+        switch (reaction)
+        {
+            case HitReaction.Stagger:
+                animator.SetTrigger("Stagger");
+                break;
+            case HitReaction.Knockback:
+                animator.SetTrigger("Knockback");
+                break;
         }
     }
     #endregion

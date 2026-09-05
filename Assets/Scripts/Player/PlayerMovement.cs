@@ -40,6 +40,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
     //[SerializeField] private EventReference iceAnchorEvent;
     //[SerializeField] private EventReference windAnchorEvent;
     [SerializeField] private EventReference dashActivationEvent;
+    [SerializeField] private EventReference voicedDashActivationEvent;
 
     private PlayerInput playerInput;
 
@@ -467,6 +468,7 @@ public class PlayerMovement : MonoBehaviour, IMovement
         }
 
         RuntimeManager.PlayOneShot(dashActivationEvent, transform.position);
+        RuntimeManager.PlayOneShot(voicedDashActivationEvent, transform.position);
 
         // Debug.Log("start dash");
         PlayerDashVFX.Instance.StartDashVFX();

@@ -8,6 +8,9 @@ public class Health : MonoBehaviour, IDamageable
 {
     [Header("FMod Events")]
     [SerializeField] private EventReference damageTakenEvent;
+    [SerializeField] private EventReference damageTakenNarratedEvent;
+    [SerializeField] private EventReference deathEvent;
+    [SerializeField] private EventReference deathNarrationEvent;
 
     private Healthbar healthbar;
     private UIPlayerHUD playerHUD;
@@ -80,11 +83,14 @@ public class Health : MonoBehaviour, IDamageable
 
         RuntimeManager.PlayOneShot(damageTakenEvent, transform.position);
 
-
+        RuntimeManager.PlayOneShot(damageTakenNarratedEvent, transform.position);
 
         if (CurrentHealth <= 0f)
         {
             Die();
+
+            RuntimeManager.PlayOneShot(deathEvent, transform.position);
+            RuntimeManager.PlayOneShot(deathNarrationEvent, transform.position);
         }
     }
 
