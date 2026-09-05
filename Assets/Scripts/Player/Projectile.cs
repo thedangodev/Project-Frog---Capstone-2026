@@ -365,6 +365,7 @@ public class Projectile : MonoBehaviour, IProjectile
             //    //Debug.Log($"[Projectile] Hit reaction = {hitReaction} on instance {GetInstanceID()} (charge% {chargePercent})");
             //    frog.PlayHitReaction(hitReaction);
             //}
+
             enemy.PlayHitReaction(hitReaction);
 
             // Apply knockback to enemy only if knockbackDistance > 0

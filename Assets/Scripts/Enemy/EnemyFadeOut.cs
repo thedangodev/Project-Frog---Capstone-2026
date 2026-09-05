@@ -1,10 +1,20 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering;
 using FMODUnity;
+
 // Drives the fade out system which calls Die() from Health.cs in order to play both cleanly fade Enemies from the scene, and - if applicable - play a death animation. -E.M
 public class EnemyFadeOut : MonoBehaviour
 {
+    // How held weapons are handled when the enemy dies. Two choices available;
+    public enum WeaponDeathMode
+    {
+        FadeWithBody,        // Weapon renderers are folded into the body fade and dissolve together.
+        DisableImmediately   // Weapon is switched off the moment Die() runs.
+    }
+
     [Header("Death Rig Swap (optional)")]
     [Tooltip("Optional. Mesh/rig to DISABLE on death (e.g. the live animated TPose rig). Leave empty on enemies that don't swap rigs.")]
     [SerializeField] private GameObject meshToDisable;
@@ -24,11 +34,23 @@ public class EnemyFadeOut : MonoBehaviour
     [Tooltip("Halted on death so residual velocity / last destination doesn't keep the enemy drifting. Left empty = auto-filled from this object.")]
     [SerializeField] private NavMeshAgent agent;
 
+    [Header("Held Weapons")]
+    [Tooltip("Weapons parented to bones (e.g. the SpearPrefab under RightHand). These sit outside the main renderer array, so list them here.")]
+    [SerializeField] private GameObject[] weaponObjects;
+    [Tooltip("FadeWithBody dissolves the weapon alongside the corpse. DisableImmediately just switches it off at the moment of death.")]
+    [SerializeField] private WeaponDeathMode weaponDeathMode = WeaponDeathMode.FadeWithBody;
+    [Tooltip("Weapons already hidden when the enemy dies (e.g. a spear mid-flight) stay hidden rather than popping back into the hand.")]
+    [SerializeField] private bool ignoreAlreadyHiddenWeapons = true;
+
     [Header("Fade")]
     [SerializeField] private Material deathMaterial;
     [SerializeField] private float duration = 1.0f;
     [Tooltip("Left empty = auto-filled on Awake (from the swap-in mesh if one is assigned, otherwise from all child renderers).")]
     [SerializeField] private Renderer[] renderers;
+    [Tooltip("Forces depth writing on the transparent death material so the far side of the mesh doesn't show through the near side.")]
+    [SerializeField] private bool forceDepthWriteOnFade = true;
+    [Tooltip("Stops the fading corpse casting a full-strength shadow after it has visually disappeared.")]
+    [SerializeField] private bool disableShadowsOnFade = true;
 
     [Header("Disable On Fade")]
     [Tooltip("Left empty = auto-filled from all child colliders on Awake.")]
@@ -45,6 +67,8 @@ public class EnemyFadeOut : MonoBehaviour
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     private static readonly int ColorId = Shader.PropertyToID("_Color");
     private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
+    private static readonly int ZWriteId = Shader.PropertyToID("_ZWrite");
+
     // Original emission colors, captured at fade start so we scale from the true value rather than compounding frame to frame.
     private Color[] baseEmission;
     private bool isFading;
@@ -84,11 +108,14 @@ public class EnemyFadeOut : MonoBehaviour
         if (healthBar != null)
             healthBar.SetActive(false);
 
-        // Stop the AI from steering a dying frog (kills the per-frame MoveToTarget at the source).
+        // Snapshot which weapons were visible BEFORE the AI scripts are switched off - disabling a component fires its OnDisable, which may re-show a thrown weapon.
+        CacheVisibleWeapons();
+
+        // Stop the AI from steering a dying enemy (kills the per-frame MoveToTarget at the source).
         foreach (var s in scriptsToDisable)
             if (s != null) s.enabled = false;
 
-        // Halt the NavMeshAgent so residual velocity / last destination doesn't keep the frog drifting.
+        // Halt the NavMeshAgent so residual velocity / last destination doesn't keep the enemy drifting.
         if (agent != null && agent.isOnNavMesh)
         {
             agent.isStopped = true;
@@ -96,13 +123,13 @@ public class EnemyFadeOut : MonoBehaviour
             agent.ResetPath();
         }
 
-        // ---- OPTIONAL RIG/MESH SWAP ----
+        ApplyWeaponDeathState();
+
         // Done BEFORE the isDead trigger so the death animation fires on the swapped-in mesh, not the live one.
         // Both meshes should share the same parent transform, so the swap-in appears in the same position/rotation.
         // Skipped entirely when the fields are left empty (enemies that don't swap rigs are unaffected).
 
-        // Clear the live rig's Avatar at death (not before) so its animations run normally while alive,
-        // but stop driving the shared skeleton once we hand off to the corpse rig.
+        // Clear the live rig's Avatar at death (not before) so its animations run normally while alive, but stop driving the shared skeleton once we hand off to the corpse rig.
         if (avatarToClear != null)
             avatarToClear.avatar = null;
 
@@ -122,16 +149,67 @@ public class EnemyFadeOut : MonoBehaviour
         }
         else
         {
-            // No animator wired   skip straight to the fade.
-
-            ChangeToDeathMaterial();
+            // No animator wired - skip straight to the fade.
             BeginFade();
         }
     }
+
+    // Weapons that were visible at the moment of death. Anything hidden at that point (a spear already thrown) is left out so it doesn't reappear on the corpse.
+    private readonly List<GameObject> weaponsAtDeath = new List<GameObject>();
+
+    private void CacheVisibleWeapons()
+    {
+        weaponsAtDeath.Clear();
+        if (weaponObjects == null) return;
+
+        foreach (var w in weaponObjects)
+        {
+            if (w == null) continue;
+            if (ignoreAlreadyHiddenWeapons && !w.activeInHierarchy) continue;
+            weaponsAtDeath.Add(w);
+        }
+    }
+
+    private void ApplyWeaponDeathState()
+    {
+        if (weaponDeathMode != WeaponDeathMode.DisableImmediately) return;
+
+        foreach (var w in weaponsAtDeath)
+            if (w != null) w.SetActive(false);
+
+        weaponsAtDeath.Clear();
+    }
+
+    // Folds the weapon's renderers into the main array so they go through the exact same material swap, alpha ramp and cleanup as the body. Called just before the fade starts.
+    private void MergeWeaponRenderers()
+    {
+        if (weaponDeathMode != WeaponDeathMode.FadeWithBody) return;
+        if (weaponsAtDeath.Count == 0) return;
+
+        var merged = new List<Renderer>(renderers ?? new Renderer[0]);
+
+        foreach (var w in weaponsAtDeath)
+        {
+            if (w == null) continue;
+
+            // Re-show the weapon if the rig swap or an OnDisable turned it off between death and fade - it was visible when the enemy died, so it should dissolve.
+            if (!w.activeSelf) w.SetActive(true);
+
+            foreach (var r in w.GetComponentsInChildren<Renderer>(true))
+                if (r != null && !merged.Contains(r))
+                    merged.Add(r);
+        }
+
+        renderers = merged.ToArray();
+    }
+
     private IEnumerator DeathSequence()
     {
-        // Wait one frame so the transition into the death state actually begins, then read the state's length and wait it out.
+        // Wait for the transition into the death state to begin AND complete - while a transition is running, GetCurrentAnimatorStateInfo still reports the OUTGOING state, so reading length too early returns the locomotion clip's length.
         yield return null;
+        while (animator.IsInTransition(0))
+            yield return null;
+
         float clipLength = animator.GetCurrentAnimatorStateInfo(0).length;
         yield return new WaitForSeconds(clipLength);
         BeginFade();
@@ -141,6 +219,11 @@ public class EnemyFadeOut : MonoBehaviour
         if (isFading) return;   // guard against double-trigger
         isFading = true;
 
+        // Pull held weapons into the renderer array first so they share the whole pipeline.
+        MergeWeaponRenderers();
+
+        // Swap to the transparent death material FIRST - CaptureEmission reads from the live material, so doing this after would snapshot the wrong emission values.
+        ChangeToDeathMaterial();
         CaptureEmission();
         StopAllCoroutines();
         StartCoroutine(FadeRoutine());
@@ -167,6 +250,7 @@ public class EnemyFadeOut : MonoBehaviour
             yield return null;
         }
         ApplyAlpha(0f);
+
         // Safety net: base-color alpha and emission are both zeroed, but hard-disable renderers so any residual specular/reflection is gone before destroy.
         foreach (var r in renderers)
             if (r != null) r.enabled = false;
@@ -178,30 +262,63 @@ public class EnemyFadeOut : MonoBehaviour
         {
             var r = renderers[i];
             if (r == null) continue;
-            // Fade base color alpha.
-            int propId;
-            if (r.material.HasProperty(BaseColorId)) propId = BaseColorId;
-            else if (r.material.HasProperty(ColorId)) propId = ColorId;
-            else propId = 0;
-            if (propId != 0)
+
+            // Every slot on the renderer, not just slot 0 - this rig has multi-submesh meshes.
+            var mats = r.materials;
+            for (int m = 0; m < mats.Length; m++)
             {
-                Color c = r.material.GetColor(propId);
-                c.a = alpha;
-                r.material.SetColor(propId, c);
+                var mat = mats[m];
+                if (mat == null) continue;
+
+                // Fade base color alpha.
+                int propId;
+                if (mat.HasProperty(BaseColorId)) propId = BaseColorId;
+                else if (mat.HasProperty(ColorId)) propId = ColorId;
+                else propId = 0;
+                if (propId != 0)
+                {
+                    Color c = mat.GetColor(propId);
+                    c.a = alpha;
+                    mat.SetColor(propId, c);
+                }
+
+                // Fade emission toward black by the same factor so the glow dies with the surface.
+                if (baseEmission != null && mat.HasProperty(EmissionColorId))
+                    mat.SetColor(EmissionColorId, baseEmission[i] * alpha);
             }
-            // Fade emission toward black by the same factor so the glow dies with the surface.
-            if (baseEmission != null && r.material.HasProperty(EmissionColorId))
-                r.material.SetColor(EmissionColorId, baseEmission[i] * alpha);
         }
     }
 
 
+    // Replaces EVERY material slot on every tracked renderer with the transparent death material. The single-slot version only swapped submesh 0, leaving the rest opaque.
     private void ChangeToDeathMaterial()
     {
-        foreach (Renderer renderer in renderers)
+        if (deathMaterial == null)
         {
-            renderer.material = deathMaterial;
-            Debug.Log($"Changed material of {renderer.gameObject.name} to {deathMaterial.name}.");
+            Debug.LogError($"[EnemyFadeOut] No deathMaterial assigned on {gameObject.name}. The enemy will pop out instead of fading.");
+            return;
+        }
+
+        foreach (Renderer r in renderers)
+        {
+            if (r == null) continue;
+
+            var mats = new Material[r.sharedMaterials.Length];
+            for (int i = 0; i < mats.Length; i++)
+                mats[i] = deathMaterial;
+            r.materials = mats;   // assigning the array instantiates per-renderer copies
+
+            if (forceDepthWriteOnFade)
+            {
+                // Transparent URP materials disable ZWrite, which lets the far side of the mesh render through the near side (the "x-ray" look). Forcing it back on restores correct self-occlusion for the duration of the fade.
+                var instanced = r.materials;
+                for (int i = 0; i < instanced.Length; i++)
+                    if (instanced[i] != null && instanced[i].HasProperty(ZWriteId))
+                        instanced[i].SetInt(ZWriteId, 1);
+            }
+
+            if (disableShadowsOnFade)
+                r.shadowCastingMode = ShadowCastingMode.Off;
         }
     }
 }
