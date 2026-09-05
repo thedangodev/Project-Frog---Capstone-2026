@@ -4,5 +4,7 @@ public enum HitReaction
 {
     None,
     Stagger,
-    Knockback
+    Knockback,
+    Block,
+    TakeHit
 }

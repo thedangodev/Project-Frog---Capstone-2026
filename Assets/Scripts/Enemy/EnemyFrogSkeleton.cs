@@ -84,7 +84,7 @@ public class EnemyFrogSkeleton : EnemyBase
 
     // Called by a player projectile (via Projectile.OnTriggerEnter) when this enemy is hit.
     // Plays the matching reaction animation. Stagger = regular shot, KnockbackReact = charged shot.
-    public void PlayHitReaction(HitReaction reaction)
+    public override void PlayHitReaction(HitReaction reaction)
     {
         if (animator == null) return;
 

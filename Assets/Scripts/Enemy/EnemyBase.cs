@@ -257,6 +257,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable, IMovement
         slowCourotine = StartCoroutine(SlowRoutine(duration, slowMultiplier));
     }
 
+    public virtual void PlayHitReaction(HitReaction reaction) { }
+
     private IEnumerator SlowRoutine(float duration, float slowMultiplier)
     {
         IsSlowed = true;

@@ -359,12 +359,13 @@ public class Projectile : MonoBehaviour, IProjectile
             // Tell the frog (if this enemy is one) which reaction to play.
             // Stagger for regular shots, KnockbackReact for charged shots.
             // -------------------------
-            var frog = enemy.GetComponentInParent<EnemyFrogSkeleton>();
-            if (frog != null)
-            {
-                //Debug.Log($"[Projectile] Hit reaction = {hitReaction} on instance {GetInstanceID()} (charge% {chargePercent})");
-                frog.PlayHitReaction(hitReaction);
-            }
+            //var frog = enemy.GetComponentInParent<EnemyFrogSkeleton>();
+            //if (frog != null)
+            //{
+            //    //Debug.Log($"[Projectile] Hit reaction = {hitReaction} on instance {GetInstanceID()} (charge% {chargePercent})");
+            //    frog.PlayHitReaction(hitReaction);
+            //}
+            enemy.PlayHitReaction(hitReaction);
 
             // Apply knockback to enemy only if knockbackDistance > 0
             if (knockbackDistance > 0f)

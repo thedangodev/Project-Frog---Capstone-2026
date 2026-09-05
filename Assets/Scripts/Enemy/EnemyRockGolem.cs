@@ -19,10 +19,13 @@ public class EnemyRockGolem : EnemyBase
     [SerializeField] private EventReference golemAttackEvent;
     [SerializeField] private EventReference voicedGolemAttackEvent;
 
+    private Animator animator;
+
     protected override void Awake()
     {
         base.Awake();
         enemyAttack = GetComponent<EnemyAttack>();
+        animator = GetComponent<Animator>();
     }
 
     protected override void Update()
@@ -78,6 +81,21 @@ public class EnemyRockGolem : EnemyBase
 
             RuntimeManager.PlayOneShot(golemAttackEvent, transform.position);
             RuntimeManager.PlayOneShot(voicedGolemAttackEvent, transform.position);
+        }
+    }
+
+    public override void PlayHitReaction(HitReaction reaction)
+    {
+        if (animator == null) return;
+
+        switch (reaction)
+        {
+            case HitReaction.Stagger:
+                animator.SetTrigger("Stagger");
+                break;
+            case HitReaction.Knockback:
+                animator.SetTrigger("Knockback");
+                break;
         }
     }
     #endregion
