@@ -73,13 +73,13 @@ Material:
     - _AO_Strength: 7.6
     - _Metallic_Strength: 0
     - _Normal_Blend: 0
-    - _Normal_Strength: 0.73
+    - _Normal_Strength: 0.2
     - _Overlay_AO_Strength: 0.5
     - _Overlay_Density: 30
     - _Overlay_Metallic_Blend: 0
-    - _Overlay_Metallic_Strength: 0.02
+    - _Overlay_Metallic_Strength: 0
     - _Overlay_Normal_Blend: 2.4
-    - _Overlay_Normal_Strength: 1.3
+    - _Overlay_Normal_Strength: 1.5
     - _Overlay_Roughness_Strength: 0
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -87,7 +87,7 @@ Material:
     m_Colors:
     - _Color_Corrector: {r: 0.8616352, g: 0.8357556, b: 0.72706115, a: 1}
     - _Overlay_Color_Corrector: {r: 0.20528619, g: 0.29979026, b: 0, a: 1}
-    - _Overlay_Direction: {r: 0, g: 1, b: 0, a: 0}
+    - _Overlay_Direction: {r: 0.49, g: 0.7, b: -0.23, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &7526175562747234385

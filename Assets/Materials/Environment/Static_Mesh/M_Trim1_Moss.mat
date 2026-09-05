@@ -87,7 +87,7 @@ Material:
     m_Colors:
     - _Color_Corrector: {r: 0.6735198, g: 0.6855346, b: 0.53534937, a: 1}
     - _Overlay_Color_Corrector: {r: 0.23149757, g: 0.33752614, b: 0.001769007, a: 1}
-    - _Overlay_Direction: {r: 0, g: 0.62, b: 0, a: 0}
+    - _Overlay_Direction: {r: 0, g: 0.57, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &7526175562747234385

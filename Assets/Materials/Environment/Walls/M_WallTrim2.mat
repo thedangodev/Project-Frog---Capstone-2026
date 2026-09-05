@@ -66,6 +66,6 @@ Material:
     - _Roughness_Strength: 0
     m_Colors:
     - _BaseColourAlpha: {r: 1, g: 1, b: 1, a: 1}
-    - _Color_Correction: {r: 1, g: 1, b: 1, a: 1}
+    - _Color_Correction: {r: 0.93710697, g: 0.9082642, b: 0.7946745, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
