@@ -33,6 +33,7 @@ public class EnemyCroc : EnemyBase
 
     [Header("FMod Events")]
     [SerializeField] private EventReference spearThrowEvent;
+    [SerializeField] private EventReference spearThrowNarratedEvent;
 
     protected override void Awake()
     {
@@ -137,6 +138,7 @@ public class EnemyCroc : EnemyBase
             attackSO.Attack(player, transform);
 
             RuntimeManager.PlayOneShot(spearThrowEvent, transform.position);
+            RuntimeManager.PlayOneShot(spearThrowNarratedEvent, transform.position);
         }
     }
 

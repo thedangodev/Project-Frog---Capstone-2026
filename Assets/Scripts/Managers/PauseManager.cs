@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Collections;
@@ -27,13 +28,26 @@ public class PauseManager : MonoBehaviour
     private bool isPaused = false;
     public bool ispaused => isPaused;
 
+    // --- Singleton / global state + event ---
+    private static PauseManager s_instance;
+    public static event Action<bool> OnPauseStateChanged;
+    public static bool GlobalIsPaused => s_instance != null ? s_instance.ispaused : Mathf.Approximately(Time.timeScale, 0f);
+
     private void Awake()
     {
+        // set singleton instance (last writer wins)
+        s_instance = this;
+
         playerInput = FindAnyObjectByType<PlayerInput>();
         RebindActionsFromCurrentMap();
 
         if (pauseOverlayPanel != null)
             pauseOverlayPanel.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        if (s_instance == this) s_instance = null;
     }
 
     private void OnEnable()
@@ -86,7 +100,6 @@ public class PauseManager : MonoBehaviour
     {
         if (isPaused)
             ResumeGame();
-
         else
             PauseGame();
     }
@@ -100,7 +113,6 @@ public class PauseManager : MonoBehaviour
             Debug.Log($"Panel active: {pauseOverlayPanel.activeSelf}");
         }
 
-
         RuntimeManager.PlayOneShot(closePauseEvent, transform.position);
 
         if (pauseOverlayPanel != null)
@@ -111,6 +123,9 @@ public class PauseManager : MonoBehaviour
 
         Time.timeScale = 1f;
         isPaused = false;
+
+        // notify listeners
+        OnPauseStateChanged?.Invoke(isPaused);
 
         StartCoroutine(ReenableGameplayInput());
     }
@@ -148,6 +163,9 @@ public class PauseManager : MonoBehaviour
 
         Time.timeScale = 0f;
         isPaused = true;
+
+        // notify listeners
+        OnPauseStateChanged?.Invoke(isPaused);
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

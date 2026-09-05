@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using FMODUnity;
 
 public class FrogMeleeAttack : EnemyAttack
 {
@@ -13,6 +14,9 @@ public class FrogMeleeAttack : EnemyAttack
     [Header("Animation Event")]
     [Tooltip("Max seconds to wait for the animation event before giving up (safety net).")]
     [SerializeField] private float attackEventTimeout = 2f;
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference attackSoundEvent;
 
     // Set true by the animation event 'attackEvent'
     private bool attackEventFired = false;
@@ -37,6 +41,9 @@ public class FrogMeleeAttack : EnemyAttack
     private IEnumerator MeleeRoutine()
     {
         IsAttacking = true;
+
+        RuntimeManager.PlayOneShot(attackSoundEvent, transform.position);
+
         attackEventFired = false;
         animator.SetTrigger("Attack");
 

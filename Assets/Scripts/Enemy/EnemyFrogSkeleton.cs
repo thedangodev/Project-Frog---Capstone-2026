@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using FMODUnity;
 
 [RequireComponent(typeof(EnemyAttack))]
 public class EnemyFrogSkeleton : EnemyBase
@@ -14,6 +15,10 @@ public class EnemyFrogSkeleton : EnemyBase
     [SerializeField] private float postAttackWaitTimeout = 2f;
     [Tooltip("Time to allow for the retreat movement before picking a new target.")]
     [SerializeField] private float postAttackRetreatTime = 1.2f;
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference regularShotDamageEvent;
+    [SerializeField] private EventReference chargedShotDamageEvent;
 
     // Small tolerance to handle floating point / very-close cases
     [SerializeField, Tooltip("Extra tolerance (meters) added to attack range checks to avoid missing attacks when extremely close.")]
@@ -87,9 +92,11 @@ public class EnemyFrogSkeleton : EnemyBase
         {
             case HitReaction.Stagger:
                 animator.SetTrigger("Stagger");
+                RuntimeManager.PlayOneShot(regularShotDamageEvent, transform.position);
                 break;
             case HitReaction.Knockback:
                 animator.SetTrigger("KnockbackReact");
+                RuntimeManager.PlayOneShot(chargedShotDamageEvent, transform.position);
                 break;
         }
     }

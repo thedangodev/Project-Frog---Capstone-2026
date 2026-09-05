@@ -1,4 +1,5 @@
 using UnityEngine;
+using FMODUnity;
 
 // Use this script to create and inherit Scriptable Objects specifically for Ranged Enemy Behaviours. -E.M
 
@@ -15,6 +16,9 @@ public class RangedAttackSO : AttackBaseSO
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private float projectileSpeed = 15f;
     [SerializeField] private float projectileLifetime = 4f;
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference spearHitEvent;
 
     // Abstract property implementations
     public override float range => _range;
@@ -88,5 +92,6 @@ public class RangedAttackSO : AttackBaseSO
 
         // Safety net: destroy the projectile after its lifetime.
         Destroy(projectile, projectileLifetime);
+        RuntimeManager.PlayOneShot(spearHitEvent, projectile.transform.position);
     }
 }

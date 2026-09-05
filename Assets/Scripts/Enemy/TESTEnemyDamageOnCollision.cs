@@ -1,4 +1,5 @@
 using UnityEngine;
+using FMODUnity;
 
 [RequireComponent(typeof(Collider))]
 public class TESTEnemyDamageOnCollision : MonoBehaviour
@@ -6,6 +7,11 @@ public class TESTEnemyDamageOnCollision : MonoBehaviour
     [Header("Damage Settings")]
     [SerializeField] private float damageAmount = 10f;
     [SerializeField] private float knockbackDistance = 5f;
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference spearHitTerrainEvent;
+    [SerializeField] private EventReference spearHitPlayerEvent;
+
     private void OnTriggerEnter(Collider other)
     {
 
@@ -13,11 +19,17 @@ public class TESTEnemyDamageOnCollision : MonoBehaviour
         {
             Debug.Log("CrocProjectile hit terrain and was destroyed.");
             Destroy(gameObject);
+
+            RuntimeManager.PlayOneShot(spearHitTerrainEvent, transform.position);
+
             return;
         }
         if (other.tag == "Player")
         {
             TryDamage(other);
+
+            RuntimeManager.PlayOneShot(spearHitPlayerEvent, transform.position);
+
             Debug.Log("CrocProjectile hit player.");
         }
         //if(other.tag != "projectile")

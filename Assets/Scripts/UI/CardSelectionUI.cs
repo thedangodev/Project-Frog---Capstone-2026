@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEditor;
+using FMODUnity;
 
 public class CardSelectionUI : MonoBehaviour
 {
@@ -12,9 +13,15 @@ public class CardSelectionUI : MonoBehaviour
     [SerializeField] private UpgradeManager upgradeManager;
     [SerializeField] private UIPlayerHUD playerHUD;
     [SerializeField] private PlayerCrosshair playerCrosshair;
+    [SerializeField] private Canvas crosshairCanvas;
+    [SerializeField] private CanvasGroup cardContainerGroup;
+
+    [Header("FMod Events")]
+    [SerializeField] private EventReference cardSelectionEvent;
 
     private CanvasGroup canvasGroup;
     public bool IsCardSelectionActive { get; private set; }
+    private bool cardAlreadyChosen = false;
 
     private List<CardUI> spawnedCards = new List<CardUI>();
 
@@ -23,6 +30,8 @@ public class CardSelectionUI : MonoBehaviour
         canvasGroup = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
         upgradeManager = UpgradeManager.Instance;
         playerCrosshair = FindFirstObjectByType<PlayerCrosshair>();
+        StartCoroutine(WaitForCrosshairCanvas());
+        cardContainerGroup = cardContainer.GetComponent<CanvasGroup>();
     }
 
     private void Start()
@@ -42,6 +51,7 @@ public class CardSelectionUI : MonoBehaviour
         canvasGroup.alpha = 1f;
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
+        StartCoroutine(FadeCardContainer(1f, 0.35f));
     }
 
     private void HideUI()
@@ -52,8 +62,24 @@ public class CardSelectionUI : MonoBehaviour
         canvasGroup.blocksRaycasts = false;
     }
 
+    private IEnumerator FadeCardContainer(float target, float duration)
+    {
+        float start = cardContainerGroup.alpha;
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            cardContainerGroup.alpha = Mathf.Lerp(start, target, t / duration);
+            yield return null;
+        }
+
+        cardContainerGroup.alpha = target;
+    }
+
     private void ShowCardSelection()
     {
+        cardAlreadyChosen = false;
         IsCardSelectionActive = true;
         Time.timeScale = 0f;
         ShowUI();
@@ -63,12 +89,25 @@ public class CardSelectionUI : MonoBehaviour
         // Hide the player's crosshair while selecting a card
         if (playerCrosshair != null)
             playerCrosshair.gameObject.SetActive(false);
+        if (crosshairCanvas != null)
+            crosshairCanvas.gameObject.SetActive(false);
 
         var manager = UpgradeManager.Instance;
        
         // Ask the upgrade manager to pick 3 random cards for the player to choose from
         List<UpgradeDataSO> selectedCards = upgradeManager.GetRandomCards(3);
         StartCoroutine(SpawnCardsSequentially(selectedCards));
+
+        RuntimeManager.PlayOneShot(cardSelectionEvent, transform.position);
+    }
+
+    private IEnumerator WaitForCrosshairCanvas()
+    {
+        while (crosshairCanvas == null)
+        {
+            crosshairCanvas = GameObject.Find("CrosshairCanvas")?.GetComponent<Canvas>();
+            yield return null;
+        }
     }
 
     private IEnumerator SpawnCardsSequentially(List<UpgradeDataSO> cards)
@@ -95,6 +134,11 @@ public class CardSelectionUI : MonoBehaviour
 
     private void OnCardChosen(UpgradeDataSO chosenCard)
     {
+        if (cardAlreadyChosen)
+            return;
+
+        cardAlreadyChosen = true;
+
         IsCardSelectionActive = false;
 
         upgradeManager.OnCardChosen(chosenCard);
@@ -113,6 +157,7 @@ public class CardSelectionUI : MonoBehaviour
         }
 
         yield return StartCoroutine(chosenUI.PlayDissolveAnimation());
+        yield return StartCoroutine(FadeCardContainer(0f, 0.5f));
 
         foreach (Transform child in cardContainer)
             Destroy(child.gameObject);
@@ -125,6 +170,8 @@ public class CardSelectionUI : MonoBehaviour
 
         if (playerCrosshair != null)
             playerCrosshair.gameObject.SetActive(true);
+        if (crosshairCanvas != null)
+            crosshairCanvas.gameObject.SetActive(true);
 
         waveSpawner.StartNextWaveAfterCard();
     }

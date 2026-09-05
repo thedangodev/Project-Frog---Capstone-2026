@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{b821155e-a4d2-46d7-a6f8-9a221ca4bbab}">
+		<property name="assetPath">
+			<value>Croc - Rishikes-002.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>3.4199999999999999</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f56cd26f-5cc2-4382-8977-db9b212216e0}</destination>
+		</relationship>
+	</object>
+</objects>

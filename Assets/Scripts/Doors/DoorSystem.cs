@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using FMODUnity;
 
 /// <summary>
 /// DoorSystem
@@ -80,6 +81,14 @@ public class DoorSystem : MonoBehaviour
 
         [NonSerialized]
         public Coroutine moveRoutine;
+
+        [Header("FMod Events")]
+        [SerializeField] public EventReference doorOpenEvent;
+        [SerializeField] public EventReference doorCloseEvent;
+        [SerializeField] public EventReference narratorAreaTransitionEvent;
+
+        [NonSerialized]
+        public bool narratorPlayed = false;
     }
     public void SetDoorReady(int index)
     {
@@ -188,19 +197,22 @@ public class DoorSystem : MonoBehaviour
     //    try { return waveRoundSystem.CurrentWaveNumber; }
     //    catch { return 0; }
     //}
-    private void MoveDoor(DoorLink link, Vector3 target, float speed)
+    private void MoveDoor(DoorLink link, Vector3 target, float speed, EventReference sound)
     {
         if (link.moveRoutine != null)
             StopCoroutine(link.moveRoutine);
 
-        link.moveRoutine = StartCoroutine(MoveDoorRoutine(link, target, speed));
+        link.moveRoutine = StartCoroutine(MoveDoorRoutine(link, target, speed, sound));
     }
 
 
-    private IEnumerator MoveDoorRoutine(DoorLink link, Vector3 target, float speed)
+    private IEnumerator MoveDoorRoutine(DoorLink link, Vector3 target, float speed, EventReference sound)
     {
         if (link.door == null)
             yield break;
+
+        if (!sound.IsNull)
+            RuntimeManager.PlayOneShot(sound, link.door.transform.position);
 
         while (Vector3.Distance(link.door.transform.position, target) > 0.01f)
         {
@@ -349,7 +361,7 @@ public class DoorSystem : MonoBehaviour
 
         // 3. Lower door position after animation completes
         Vector3 target = link.originalPosition + Vector3.down * link.lowerDistance;
-        MoveDoor(link, target, link.lowerSpeed);
+        MoveDoor(link, target, link.lowerSpeed, link.doorOpenEvent);
         link.opened = true;
     }
 
@@ -478,8 +490,11 @@ public class DoorSystem : MonoBehaviour
             MoveDoor(
                 link,
                 link.originalPosition,
-                link.riseSpeed
+                link.riseSpeed,
+                link.doorCloseEvent
             );
+
+            
         }
 
         // 4. Update tracking flags and state
@@ -498,6 +513,13 @@ public class DoorSystem : MonoBehaviour
     {
         if (index < 0 || index >= links.Length) return;
         var link = links[index];
+
+        if (!link.narratorPlayed && !link.narratorAreaTransitionEvent.IsNull)
+        {
+            RuntimeManager.PlayOneShot(link.narratorAreaTransitionEvent, link.door != null ? link.door.transform.position : transform.position);
+            link.narratorPlayed = true;
+        }
+
         //if (link == null)
         //{
         //    Debug.LogWarning($"DoorSystem: OnTriggerActivated received invalid link index {index}.");

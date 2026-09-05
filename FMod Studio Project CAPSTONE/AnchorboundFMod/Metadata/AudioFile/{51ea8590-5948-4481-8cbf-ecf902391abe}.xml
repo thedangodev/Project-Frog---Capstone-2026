@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{51ea8590-5948-4481-8cbf-ecf902391abe}">
+		<property name="assetPath">
+			<value>Player - Sheala-004.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>5.2705624999999996</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f56cd26f-5cc2-4382-8977-db9b212216e0}</destination>
+		</relationship>
+	</object>
+</objects>
