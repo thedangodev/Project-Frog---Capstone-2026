@@ -70,6 +70,8 @@ Material:
     - _AlphaDstBlend: 0
     - _AlphaSrcBlend: 1
     - _Anisotropy: 0.5
+    - _BUILTIN_QueueControl: -1
+    - _BUILTIN_QueueOffset: 0
     - _BlendMode: 0
     - _Color_Variation: 2
     - _ConservativeDepthOffsetEnable: 0
@@ -89,7 +91,7 @@ Material:
     - _Noise_Tiling: 0.62
     - _OpaqueCullMode: 2
     - _PerPixelSorting: 0
-    - _QueueControl: -1
+    - _QueueControl: 1
     - _QueueOffset: 0
     - _RayTracing: 0
     - _ReceivesSSR: 1

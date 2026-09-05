@@ -98,6 +98,7 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _DstBlendAlpha: 0
     - _EMISSION: 0
     - _ENVIRONMENTREFLECTIONS_OFF: 1
     - _EnvironmentReflections: 1
@@ -116,6 +117,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
     - _Surface: 0
     - _USE_DETAIL_MAPS: 0
     - _WorkflowMode: 1

@@ -24,6 +24,10 @@ public class WaveRoundSystem : MonoBehaviour
     [Tooltip("Wave numbers (1-based) after which the player must reach the next area before the following wave spawns.")]
     [SerializeField] private int[] transitionAfterWaves;
 
+    [Header("Wave Clear Debug")]
+    [Tooltip("Toggles on (T) key to clear wave ")]
+    [SerializeField] private bool clearWaveDebug = false;
+
     private readonly List<GameObject> activeEnemies = new List<GameObject>();
 
     private int currentWaveIndex = -1;
@@ -64,7 +68,7 @@ public class WaveRoundSystem : MonoBehaviour
     private void Update()
     {
         //kill all enemies in the wave to test card selection
-        if (Input.GetKeyDown(KeyCode.T))
+        if (clearWaveDebug && Input.GetKeyDown(KeyCode.T))
         {
             KillAllEnemiesInWave();
             Debug.Log("Skill issue detected");
