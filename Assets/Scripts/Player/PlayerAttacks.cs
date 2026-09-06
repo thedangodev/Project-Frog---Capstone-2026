@@ -251,7 +251,7 @@ public class PlayerAttacks : MonoBehaviour
         if (Time.time < lastFireTime + fireCooldown) return;
 
         attackWindowTimer = attackWindowDuration;
-        OnShotFired?.Invoke(false);
+        //OnShotFired?.Invoke(false);
         ApplyBasicShotSlow();
 
         //Shoot(0f, aimDirection); // now handled in FirePrimaryProjectile method
@@ -434,6 +434,7 @@ public class PlayerAttacks : MonoBehaviour
     {
         Vector3 aimDirection = GetAimDirection();
         Shoot(0f, aimDirection);
+        OnShotFired?.Invoke(false);
         RuntimeManager.PlayOneShot(basicShotEvent, transform.position);
         RuntimeManager.PlayOneShot(basicShotEvent2, transform.position);
         lastFireTime = Time.time;
