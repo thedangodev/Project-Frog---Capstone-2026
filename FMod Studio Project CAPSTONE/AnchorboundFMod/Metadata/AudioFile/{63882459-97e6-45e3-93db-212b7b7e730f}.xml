@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{63882459-97e6-45e3-93db-212b7b7e730f}">
+		<property name="assetPath">
+			<value>Ceremonial War Drums.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>109.65600000000001</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{f56cd26f-5cc2-4382-8977-db9b212216e0}</destination>
+		</relationship>
+	</object>
+</objects>
